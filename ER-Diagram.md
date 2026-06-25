@@ -1,12 +1,14 @@
 ```mermaid
 erDiagram
-  books ||--o{ users : "1つの書籍情報は1つの作成者IDを持つ"
-  books ||--o{ book_genre : "複数の書籍情報は1以上のジャンルを持つ"
-  genres ||--o{ book_genre : "複数のジャンルは1以上の書籍情報を持つ"
-  users ||--o{ user_book : "１つのユーザーIDは複数の書籍情報を持つ"
-  books ||--o{ user_book : "複数の書籍情報は1つのユーザーIDを持つ"
-  users ||--o{ user_review : "１つのユーザーは１つのレビューを持つ"
-  reviews ||--|| user_review : "１つのレビューは１つのユーザーIDを持つ"
+  books ||--|| users : "1つの書籍情報は1つのユーザーIDを持つ"
+  books ||--|{ book_genres : "1つの書籍情報は1以上のジャンルを持つ"
+  genres ||--|{ book_genres : "1つのジャンルは1以上の書籍情報を持つ"
+  users ||--o{ reviews : "１つのユーザーIDは0以上のレビューを持つ"
+  books ||--o{ favorites : "１つの書籍情報は0以上のお気に入りを持つ"
+  users ||--o{ favorites : "１つのユーザーIDは0以上のお気に入りを持つ"
+  favorites ||--|| users : "１つのお気に入りは1つのユーザーIDを持つ"
+  reviews ||--|| review_likes : "１つのレビューは１つのいいねを持つ"
+  books ||--o{ reviews : "1つの書籍情報は複数のレビューを持つ"
 
   users {
     bigint          id                  PK
@@ -48,7 +50,7 @@ erDiagram
     timestamp       updated_at
   }
 
-  book_genre {
+  book_genres {
     bigint          id                  PK
     bigint          book_id             FK
     bigint          genre_id            FK
@@ -56,7 +58,7 @@ erDiagram
     timestamp       updated_at
   }
 
-  user_book {
+  favorites {
     bigint          id                  PK
     bigint          user_id             FK
     bigint          book_id             FK
@@ -64,7 +66,7 @@ erDiagram
     timestamp       updated_at
   }
 
-  user_review {
+  review_likes {
     bigint          id                  PK
     bigint          user_id             FK
     bigint          review_id           FK
