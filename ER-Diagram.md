@@ -1,15 +1,15 @@
 ```mermaid
 erDiagram
   books ||--|| users : "1つの書籍情報は1つのユーザーIDを持つ"
+  books ||--o{ reviews : "1つの書籍情報は0以上のレビューを持つ"
+  books ||--o{ favorites : "1つの書籍情報は0以上のお気に入りを持つ"
   books ||--|{ book_genres : "1つの書籍情報は1以上のジャンルを持つ"
   genres ||--|{ book_genres : "1つのジャンルは1以上の書籍情報を持つ"
   users ||--o{ reviews : "１つのユーザーIDは0以上のレビューを持つ"
-  books ||--o{ favorites : "１つの書籍情報は0以上のお気に入りを持つ"
   users ||--o{ favorites : "１つのユーザーIDは0以上のお気に入りを持つ"
-  favorites ||--|| users : "１つのお気に入りは1つのユーザーIDを持つ"
-  reviews ||--|| review_likes : "１つのレビューは１つのいいねを持つ"
-  books ||--o{ reviews : "1つの書籍情報は複数のレビューを持つ"
-
+  users ||--o{ review_likes : "１つのユーザーは0以上のいいねをほつ"
+  reviews ||--o{ review_likes : "１つのレビューは0以上のいいねを持つ"
+  
   users {
     bigint          id                  PK
     varchar(255)    name
