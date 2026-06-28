@@ -12,11 +12,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        /**
+         * 全Seederを記述順に実行する
+         */
+        $this->call([
+            UserSeeder::class,              // ユーザー
+            GenreSeeder::class,             // ジャンル
+            BookSeeder::class,              // 書籍情報
+            ReviewSeeder::class,            // レビュー
+            FavoriteSeeder::class,          // お気に入り
+            ReviewLikeSeeder::class,        // いいね
+        ]);
     }
 }
