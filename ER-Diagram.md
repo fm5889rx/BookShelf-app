@@ -3,13 +3,13 @@ erDiagram
   books ||--|| users : "1つの書籍情報は1つのユーザーIDを持つ"
   books ||--o{ reviews : "1つの書籍情報は0以上のレビューを持つ"
   books ||--o{ favorites : "1つの書籍情報は0以上のお気に入りを持つ"
-  books ||--|{ book_genres : "1つの書籍情報は1以上のジャンルを持つ"
-  genres ||--|{ book_genres : "1つのジャンルは1以上の書籍情報を持つ"
+  books ||--|{ book_genre : "1つの書籍情報は1以上のジャンルを持つ"
+  genres ||--|{ book_genre : "1つのジャンルは1以上の書籍情報を持つ"
   users ||--o{ reviews : "１つのユーザーIDは0以上のレビューを持つ"
   users ||--o{ favorites : "１つのユーザーIDは0以上のお気に入りを持つ"
   users ||--o{ review_likes : "１つのユーザーは0以上のいいねをほつ"
   reviews ||--o{ review_likes : "１つのレビューは0以上のいいねを持つ"
-  
+
   users {
     bigint          id                  PK
     varchar(255)    name
@@ -50,7 +50,7 @@ erDiagram
     timestamp       updated_at
   }
 
-  book_genres {
+  book_genre {
     bigint          id                  PK
     bigint          book_id             FK
     bigint          genre_id            FK

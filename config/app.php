@@ -164,10 +164,11 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
+        // App\Providers\AuthServiceProvider::class,        // 標準の認証機能は無効化する
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\FortifyServiceProvider::class,        // Fortifyサービスプロバイダを有効にする
     ])->toArray(),
 
     /*
