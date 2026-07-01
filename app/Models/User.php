@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\Book;
+use App\Models\Review;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,5 +53,16 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Book::class, 'favorites')
                         ->withTimestamps();
+    }
+
+    public function LikedReviews(): BelongsToMany       // いいねーレビュー間リレーション（多対多）
+    {
+        return $this->belongsToMany(
+            Review::class,
+            'review_likes',
+            'user_id',
+            'review_id'
+        )
+            ->withTimestamps();
     }
 }

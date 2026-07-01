@@ -26,17 +26,24 @@ class Review extends Model
     /**
      * リレーション定義
      */
-    public function books(): BelongsTo              // 書籍情報ーレビュー間リレーション
+    public function books(): BelongsTo                  // 書籍情報ーレビュー間リレーション(多対１)
     {
-        $this->belongsTo(Book::class);
+        return $this->belongsTo(Book::class);
     }
 
-    public function likes(): BelongsToMany
+    public function user(): BelongsTo                   // レビューーユーザー間リレーション（多対１）
     {
-        return $this->belongsToMany(User::class,
-                                    'review_likes',
-                                    'review_id',
-                                    'user_id')
-                    ->withTimestamps();
+        return $this->belongsTo(User::class);
+    }
+
+    public function likedByUsers(): BelongsToMany       // いいねーユーザー間リレーション（多対多）
+    {
+        return $this->belongsToMany(
+            User::class,
+            'review_likes',
+            'review_id',
+            'user_id'
+        )
+            ->withTimestamps();
     }
 }
