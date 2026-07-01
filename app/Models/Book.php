@@ -21,7 +21,7 @@ class Book extends Model
         'title',
         'author',
         'isbn',
-        'publish_date',
+        'published_date',
         'description',
         'image_url',
         'user_id',
