@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
  */
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReviewController;
 use Symfony\Component\Routing\Annotation\Route as AnnotationRoute;
 
@@ -49,9 +50,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
+// ジャンルのルーティング
+Route::middleware('auth')->group(function () {
+    Route::get('/genres', [GenreController::class, 'index'])->name('genres.index');
+    Route::get('/genres/create', [GenreController::class, 'create'])->name('genres.create');
+    Route::post('/genres', [GenreController::class, 'store'])->name('genres.store');
+    Route::get('/genres/{id}', [GenreController::class, 'show'])->name('genres.show');
+    Route::get('/genres/{id}/edit', [GenreController::class, 'edit'])->name('genres.edit');
+    Route::put('/genres/{id}', [GenreController::class, 'update'])->name('genres.update');
+    Route::delete('/genres/{id}', [GenreController::class, 'destroy'])->name('genres.destroy');
+});
+
 //仮ルート
 Route::middleware('auth')->group(function () {
-    Route::get('/genres', fn() => 'ジャンル一覧（準備中）')->name('genres.index');
     Route::get('/favorites', fn() => 'お気に入り一覧（準備中）')->name('favorites.index');
     Route::post('/books/{book}/favorites', fn() => 'お気に入りトグル（準備中）')->name('favorites.toggle');
     Route::get('/ranking', fn() => 'ランキング一覧（準備中）')->name('ranking.index');
