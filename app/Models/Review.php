@@ -18,15 +18,16 @@ class Review extends Model
      */
     protected $fillable = [
         'user_id',
-        'evaluation_value',
+        'rating',
         'comment',
-        'book_id'
+        'book_id',
+        'user_id',
     ];
 
     /**
      * リレーション定義
      */
-    public function books(): BelongsTo                  // 書籍情報ーレビュー間リレーション(多対１)
+    public function book(): BelongsTo                  // 書籍情報ーレビュー間リレーション(多対１)
     {
         return $this->belongsTo(Book::class);
     }
@@ -38,12 +39,11 @@ class Review extends Model
 
     public function likedByUsers(): BelongsToMany       // いいねーユーザー間リレーション（多対多）
     {
-        return $this->belongsToMany(
-            User::class,
+        return $this->belongsToMany(                    // いいねテーブルを介して、レビューとユーザーの
+            User::class,                                // 多対多のリレーションを定義
             'review_likes',
             'review_id',
             'user_id'
-        )
-            ->withTimestamps();
+        )->withTimestamps();
     }
 }

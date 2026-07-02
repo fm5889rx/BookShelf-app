@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::post('/reviews/{review}', [ReviewController::class, 'like'])->name('reviews.like');
-    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
