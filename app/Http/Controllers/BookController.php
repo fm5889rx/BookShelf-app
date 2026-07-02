@@ -73,7 +73,6 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-dump('books.show');
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
         return view('books.show', compact('book'));             // 書籍詳細画面を表示

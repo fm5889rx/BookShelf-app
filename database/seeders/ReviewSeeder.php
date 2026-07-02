@@ -18,7 +18,7 @@ class ReviewSeeder extends Seeder
         for ($i = 1; $i <= 32; $i++) {                  // 生成件数回繰り返し
             $review = Review::Create([                  // レコード新規作成
                 'user_id' => random_int(1, 5),          // 1〜5のランダムなユーザーID
-                'evaluation_value' => random_int(3, 5), // 3〜5のランダムな評価点
+                'rating' => random_int(3, 5),           // 3〜5のランダムな評価点
                 'comment' => '',                        // 一旦コメントは空にする
                 'book_id' => random_int(1, 11),         // 1〜11のランダムな書籍ID
             ]);
