@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
  */
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReviewController;
 use Symfony\Component\Routing\Annotation\Route as AnnotationRoute;
@@ -61,9 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/genres/{id}', [GenreController::class, 'destroy'])->name('genres.destroy');
 });
 
-//仮ルート
+// その他ルート
 Route::middleware('auth')->group(function () {
-    Route::get('/favorites', fn() => 'お気に入り一覧（準備中）')->name('favorites.index');
-    Route::post('/books/{book}/favorites', fn() => 'お気に入りトグル（準備中）')->name('favorites.toggle');
-    Route::get('/ranking', fn() => 'ランキング一覧（準備中）')->name('ranking.index');
+    Route::post('/books/{book}/favorites', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 });
+Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+Route::get('/ranking', [FavoriteController::class, 'ranking'])->name('ranking.index');
