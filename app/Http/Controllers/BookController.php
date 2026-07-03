@@ -83,12 +83,12 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
-        dump('books.edit');
-        if (!Auth::check()) {                                   // ログイン済みかチェック
-            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
-        }
-
-        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
+//        if (!Auth::check()) {                                   // ログイン済みかチェック
+//            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
+//        }
+//
+//        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
+        $this->authorize('update', Book::findOrFail($id));      // ログインユーザーが書籍情報の作成者かpolicyでチェック
 
         $genres = Genre::all();                                 // 登録ジャンルを全て取得
 
@@ -100,12 +100,13 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, string $id)
     {
-        if (!Auth::check()) {                                   // ログイン済みかチェック
-            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
-        }
+//        if (!Auth::check()) {                                   // ログイン済みかチェック
+//            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
+//        }
+//
+//        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
-        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
-
+        $this->authorize('update', Book::findOrFail($id));      // ログインユーザーが書籍情報の作成者かpolicyでチェック
         $validated = $request->validated();                     // 入力された書籍データのバリデーションチェック
 
         $book->update($validated);                              // バリデーション済みのデータでレコードを更新
@@ -120,11 +121,13 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        if (!Auth::check()) {                                   // ログイン済みかチェック
-            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
-        }
+//        if (!Auth::check()) {                                   // ログイン済みかチェック
+//            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
+//        }
+//
+//        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
-        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
+        $this->authorize('delete', Book::findOrFail($id));      // ログインユーザーが書籍情報の作成者かpolicyでチェック
 
         $book->delete();
 
