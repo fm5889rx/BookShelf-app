@@ -12,25 +12,6 @@ use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        dump('reviews.index');
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        dump('reviews.create');
-
-        //
-    }
-
-    /**
      * いいねボタンの処理
      */
     public function like(Request $request, Review $review)
@@ -59,7 +40,7 @@ class ReviewController extends Controller
         $validated['book_id'] = $bookId;                        // バリデーション済みのデータにbook_idを追加
 
         $validated['user_id'] = auth()->id();                   // バリデーション済みのデータにuser_idを追加
-//dd($validated, $bookId);
+
         Review::create($validated);                             // バリデーション済みのデータでレビューを作成
 
         return redirect()->back()                               // 作成後、前のページにリダイレクト
@@ -71,7 +52,6 @@ class ReviewController extends Controller
      */
     public function show(string $id)
     {
-        dump('reviews.show');
         $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
                                                                 // 存在しない場合は404エラーを返す
 
@@ -83,13 +63,14 @@ class ReviewController extends Controller
      */
     public function edit(string $id)
     {
-        if (!Auth::check())                                     // ログイン済みかチェック
-        {
-            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
-        }
-
-        $review = Review::with('book')->findOrFail($id);        // 指定されたIDのレビューと紐付いた書籍情報を取得、
-                                                                // 存在しない場合は404エラーを返す
+//        if (!Auth::check())                                     // ログイン済みかチェック
+//        {
+//            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
+//        }
+//
+//        $review = Review::with('book')->findOrFail($id);        // 指定されたIDのレビューと紐付いた書籍情報を取得、
+//                                                                // 存在しない場合は404エラーを返す
+        $this->authorize('update', Review::findOrFail($id));      // ログインユーザーがレビューの作成者かpolicyでチェック
 
         return view('reviews.edit', compact('review'));         // レビュー編集ページにレビュー情報を渡す
     }
@@ -99,13 +80,14 @@ class ReviewController extends Controller
      */
     public function update(UpdateReviewRequest $request, string $id)
     {
-        if (!Auth::check())                                     // ログイン済みかチェック
-        {
-            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
-        }
-
-        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
-                                                                // 存在しない場合は404エラーを返す
+//        if (!Auth::check())                                     // ログイン済みかチェック
+//        {
+//            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
+//        }
+//
+//        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
+//                                                                // 存在しない場合は404エラーを返す
+        $this->authorize('update', Review::findOrFail($id));      // ログインユーザーがレビューの作成者かpolicyでチェック
 
         $validated = $request->validated();                     // バリデーション済みのデータを取得
 
@@ -125,14 +107,14 @@ class ReviewController extends Controller
      */
     public function destroy(string $id)
     {
-        dump('reviews.destroy');
-        if (!Auth::check())                                     // ログイン済みかチェック
-        {
-            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
-        }
-    
-        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
-                                                                // 存在しない場合は404エラーを返す
+//        if (!Auth::check())                                     // ログイン済みかチェック
+//        {
+//            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
+//        }
+//
+//        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
+//                                                                // 存在しない場合は404エラーを返す
+        $this->authorize('delete', Review::findOrFail($id));      // ログインユーザーがレビューの作成者かpolicyでチェック
 
         $review->delete();                                      // レビューを削除
 
