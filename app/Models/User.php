@@ -55,7 +55,7 @@ class User extends Authenticatable
                         ->withTimestamps();
     }
 
-    public function LikedReviews(): BelongsToMany       // いいねーレビュー間リレーション（多対多）
+    public function likedReviews(): BelongsToMany       // お気に入りーレビュー間リレーション（多対多）
     {
         return $this->belongsToMany(
             Review::class,

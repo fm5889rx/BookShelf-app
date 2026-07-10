@@ -39,7 +39,7 @@ class ReviewController extends Controller
 
         $validated['book_id'] = $bookId;                        // バリデーション済みのデータにbook_idを追加
 
-        $validated['user_id'] = auth()->id();                   // バリデーション済みのデータにuser_idを追加
+        $validated['user_id'] = auth()->id();         // バリデーション済みのデータにログインユーザーのuser_idを追加
 
         Review::create($validated);                             // バリデーション済みのデータでレビューを作成
 

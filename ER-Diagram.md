@@ -26,8 +26,8 @@ erDiagram
     varchar(255)    author
     varchar(13)     isbn
     timestamp       published_date
-    string          description
-    string          image_url
+    text            description
+    text            image_url
     bigint          user_id             FK
     timestamp       created_at
     timestamp       updated_at
@@ -44,7 +44,7 @@ erDiagram
     bigint          id                  PK
     bigint          posted_id           FK
     bigint          book_id             FK
-    tinyint         evaluation_value
+    tinyint         rating
     varchar(255)    comment
     timestamp       created_at
     timestamp       updated_at

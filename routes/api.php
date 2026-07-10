@@ -13,14 +13,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-use App\Http\Controllers\api\v1\BookController;
+use App\Http\Controllers\api\v1\ApiBookController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/v1/books', [BookController::class, 'index']);
-Route::get('/v1/books/{book}', [BookController::class, 'show']);
-Route::post('/v1/books', [BookController::class, 'store']);
-Route::put('/v1/books/{book}', [BookController::class, 'update']);
-Route::delete('/v1/books/{book}', [BookController::class, 'destroy']);
+Route::get('/v1/books', [ApiBookController::class, 'index']);
+Route::get('/v1/books/{book}', [ApiBookController::class, 'show']);
+Route::post('/v1/books', [ApiBookController::class, 'store']);
+Route::put('/v1/books/{book}', [ApiBookController::class, 'update']);
+Route::delete('/v1/books/{book}', [ApiBookController::class, 'destroy']);

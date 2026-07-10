@@ -21,7 +21,7 @@ class Genre extends Model
     /**
      * リレーション定義
      */
-    public function books(): BelongsToMany          // ジャンルー書籍情報間リレーション
+    public function books(): BelongsToMany          // ジャンルー書籍情報間リレーション（多対多）
     {
         return $this->belongsToMany(Book::class);
     }
