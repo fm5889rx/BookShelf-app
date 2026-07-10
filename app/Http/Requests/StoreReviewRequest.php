@@ -22,7 +22,7 @@ class StoreReviewRequest extends FormRequest
         $rules = [                                          // POST用バリデーションルール
             'rating'  => 'required|integer|in:1,2,3,4,5',
             'comment' => 'required|string|max:255',
-            'book-id' => 'sometimes|exists:books,id',
+            'book_id' => 'sometimes|exists:books,id',
         ];
 
         return $rules;                                      // バリデーションルールを返す

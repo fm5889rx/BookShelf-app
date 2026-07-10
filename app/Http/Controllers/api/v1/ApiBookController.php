@@ -3,19 +3,20 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreBookRequest;
-use App\Http\Requests\UpdateBookRequest;
+use App\Http\Requests\ApiSearchBookRequest;
+use App\Http\Requests\ApiStoreBookRequest;
+use App\Http\Requests\ApiUpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
-use Illuminate\Http\Request;
 use illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 
-class BookController extends Controller
+class ApiBookController extends Controller
 {
     /**
      * 書籍一覧を取得する
      */
-    public function index(): AnonymousResourceCollection
+    public function index(ApiSearchBookRequest $request): AnonymousResourceCollection
     {
         $books = Book::withCount('reviews')                     // レビュー数をカウント
             ->withAvg('reviews', 'rating')                      // レビューの平均評価を計算
@@ -28,11 +29,13 @@ class BookController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBookRequest $request)
+    public function store(ApiStoreBookRequest $request)
     {
+        $user = Auth::user();                                   // ログインユーザー情報を取得
+
         $validated = $request->validated();                     // バリデーション済みのデータを取得
 
-        $validated['user_id'] = 1;                              // ログインユーザーIDを取得(1は仮の値)
+        $validated['user_id'] = $user->id ?? 1;                 // ログインユーザーIDを取得、未ログインなら1
 
         $book = Book::create($validated);                       // 書籍を新規作成
 
@@ -57,7 +60,7 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBookRequest $request, string $id)
+    public function update(ApiUpdateBookRequest $request, string $id)
     {
         $validated = $request->validated();                     // バリデーション済みのデータを取得
 

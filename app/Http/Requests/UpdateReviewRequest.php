@@ -22,7 +22,6 @@ class UpdateReviewRequest extends FormRequest
         $rules = [                                          // PUT用バリデーションルール
             'rating'  => 'required|integer|in:1,2,3,4,5',
             'comment' => 'required|string|max:255',
- //           'book_id' => 'sometimes|exists:books,id',
         ];
 
         return $rules;                                      // バリデーションルールを返す
@@ -38,8 +37,6 @@ class UpdateReviewRequest extends FormRequest
             'comment.required' => 'コメントは必須です',
             'comment.string'   => 'コメントは文字列で入力してください',
             'comment.max'      => 'コメントは255文字以下で入力してください',
-//            'book_id.required' => '書籍情報は必須です',
-//            'book_id.exists'   => '指定された書籍は存在しません',
         ];
     }
 }
