@@ -58,7 +58,7 @@ class BookController extends Controller
             'user_id' => $userId,
         ]);
 
-        $book->genres()->sync($validated['genres'] ?? []);      // ジャンルIDの紐付けをピボットテーブルに保存
+        $book->genres()->sync($validated['genres'] ?? []);   // ジャンルIDの紐付けをピボットテーブルに保存
 
         return redirect()->route('books.index');                // 書籍一覧画面にリダイレクト
     }
@@ -74,7 +74,7 @@ class BookController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * 書籍編集画面を表示
      */
     public function edit(string $id)
     {
@@ -82,8 +82,9 @@ class BookController extends Controller
 //            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
 //        }
 //
-//        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
-        $this->authorize('update', Book::findOrFail($id));      // ログインユーザーが書籍情報の作成者かpolicyでチェック
+        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
+
+        $this->authorize('edit', $book);            // ログインユーザーが書籍情報の作成者かpolicyでチェック
 
         $genres = Genre::all();                                 // 登録ジャンルを全て取得
 
@@ -99,14 +100,15 @@ class BookController extends Controller
 //            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
 //        }
 //
-//        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
+        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
-        $this->authorize('update', Book::findOrFail($id));      // ログインユーザーが書籍情報の作成者かpolicyでチェック
-        $validated = $request->validated();                     // 入力された書籍データのバリデーションチェック
+        $this->authorize('update', $book);          // ログインユーザーが書籍情報の作成者かpolicyでチェック
 
-        $book->update($validated);                              // バリデーション済みのデータでレコードを更新
+        $validated = $request->validated();                 // 入力された書籍データのバリデーションチェック
 
-        $book->genres()->sync($validated['genres'] ?? []);      // ジャンルIDの紐付けをピボットテーブルに保存
+        $book->update($validated);                          // バリデーション済みのデータでレコードを更新
+
+        $book->genres()->sync($validated['genres'] ?? []);   // ジャンルIDの紐付けをピボットテーブルに保存
 
         return redirect()->route('books.index');                // 書籍一覧にリダイレクト
     }
@@ -120,12 +122,12 @@ class BookController extends Controller
 //            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
 //        }
 //
-//        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
+        $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
-        $this->authorize('delete', Book::findOrFail($id));      // ログインユーザーが書籍情報の作成者かpolicyでチェック
+        $this->authorize('delete', $book);          // ログインユーザーが書籍情報の作成者かpolicyでチェック
 
-        $book->delete();
+        $book->delete();                                        // レコードを削除
 
-        return redirect()->route('books.index');
+        return redirect()->route('books.index');                // 書籍一覧画面へリダイレクト
     }
 }

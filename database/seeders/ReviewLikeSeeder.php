@@ -45,7 +45,7 @@ class ReviewLikeSeeder extends Seeder
                 $selectedIds = (array)$selectedIds;
 
                 // レコード書き込み
-                $review->likes()->syncWithoutDetaching($selectedIds);
+                $review->likedByUsers()->syncWithoutDetaching($selectedIds);
             }
         });
     }

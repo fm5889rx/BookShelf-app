@@ -15,7 +15,8 @@ class GenreFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->word(),   // ランダムで一意性のジャンル名を生成
+            // ランダムで一意性のジャンル名を生成
+            'name' => $this->faker->unique()->regexify('[A-Za-z]{4,10}'),
             'created_at' => now(),                      // 現在時刻を設定
             'updated_at' => now(),                      // 現在時刻を設定
         ];

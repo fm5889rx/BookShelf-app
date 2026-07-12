@@ -5,16 +5,17 @@ namespace Tests\Unit;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
-use Illuminate\Validation\Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ApiValidationTest extends TestCase
 {
-    /** テスト共有変数 */
-    protected $userId;                                  // テスト用に保持するユーザーID
+    use RefreshDatabase;                                // データベースをリセットするトレイト
 
-    protected $genreId;                                 // テスト用に保持するジャンルID
+    /** テスト共有変数 */
+    protected $user;                                    // テスト用に保持するユーザー情報
+
+    protected $genre;                                   // テスト用に保持するジャンル情報
 
     protected $book;                                    // テスト用に保持する書籍情報
 
@@ -23,15 +24,13 @@ class ApiValidationTest extends TestCase
         parent::setUp();
 
         // テスト用のusersデータを作成
-        $user = User::factory()->create();              // テスト用のユーザーを登録
-        $this->userId = $user->id;                      // 取得したIDを保持
+        $this->user = User::factory()->create();        // テスト用のユーザーを登録
 
-        // テスト用のtagsテーブルを作成
-        $genre = Genre::factory()->create();            // テスト用のジャンルを登録
-        $this->genreId = $genre->id;                    // 取得したIDを保持
+        // テスト用のジャンルテーブルを作成
+        $this->genre = Genre::factory()->create();      // テスト用のジャンルを登録
 
-        $book = Book::factory()->count(1)->create([     // テスト用の書籍情報を1件登録
-            'user_id' => $this->userId,                 // 存在するユーザーIDを使用
+        $this->book = Book::factory()->create([         // テスト用の書籍情報を1件登録
+            'user_id' => $this->user->id,               // 存在するユーザーIDを使用
         ]);
     }
 
@@ -130,198 +129,240 @@ class ApiValidationTest extends TestCase
     /** 正常終了 **/
     public function test_api_正常系_postで成功を返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'user_id' => $this->userId,                 // 存在する user_id を使用
-            'genres' => [$this->genreId],               // 存在する genre_id を使用
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(201);                        // 作成成功は 201
+        // 検証
+        $response->assertStatus(201);                       // 作成成功は 201
+
+        $this->assertDatabaseHas('books', [                 // データベースに書き込まれているか確認
+            'title' => 'テストタイトル',
+            'isbn' => '1234567890123',
+            'user_id' => $this->user->id,
+        ]);
     }
 
     /** タイトルが空文字列 **/
     public function test_api_異常系_postで空のtitleのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => '',                             // タイトルが空文字列
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => '',                              // タイトルが空文字列
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['title']);    // titleに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['title']);        // titleに対するバリデーションエラーかを確認
     }
 
     /** 長すぎるタイトル文字列 **/
     public function test_api_異常系_postで長すぎるtitleのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => str_repeat('A', 256),            // mox:255なので256文字の文字列
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => str_repeat('A', 256),            // max:255なので256文字の文字列
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['title']);    // titleに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['title']);        // titleに対するバリデーションエラーかを確認
     }
 
     /** 著者が空文字列 **/
     public function test_api_異常系_postで空のauthorのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => '',                             // 著者が空文字列
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => '',                             // 著者が空文字列
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['author']);   // authorに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['author']);       // authorに対するバリデーションエラーかを確認
     }
 
     /** 長すぎる著者文字列 **/
     public function test_api_異常系_postで長すぎるautherのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => str_repeat('A', 256),           // max:255なので256文字の文字列
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+            'author' => str_repeat('A', 256),               // max:255なので256文字の文字列
             'isbn' => '1234567890123',
             'published_date' => '2026-07-01',
             'description' => 'テスト説明',
             'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+            'user_id' => $this->user->id,                   // 存在する user_id を使用
+            'genres' => [$this->genre->id],                 // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['author']);   // authorに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['author']);       // authorに対するバリデーションエラーかを確認
     }
 
     /** ISBNコードが空文字列 **/
     public function test_api_異常系_postで空のisbnのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '',                               // isbnが空文字列
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '',                               // isbnが空文字列
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['isbn']);     // isbnに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['isbn']);         // isbnに対するバリデーションエラーかを確認
     }
 
     /** ISBNコードが12桁 **/
     public function test_api_異常系_postで短いisbnのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '123456789012',                   // digits:13なので12桁の文字列
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '123456789012',                   // digits:13なので12桁の文字列
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['isbn']);     // isbnに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['isbn']);         // isbnに対するバリデーションエラーかを確認
     }
 
     /** ISBNコードが14桁 **/
     public function test_api_異常系_postで長いisbnのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '12345678901234',                 // digits:13なので14桁の文字列
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
-        ]);
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '12345678901234',                 // digits:13なので14桁の文字列
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['isbn']);     // isbnに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['isbn']);         // isbnに対するバリデーションエラーかを確認
     }
 
-    /** 発行日が空文字列 **/
+    /** 同じISBNコード **/
+    public function test_api_異常系_postで同じisbnのバリデーションエラーを返す()
+    {
+        $response = $this->actingAs($this->user)->          // すでに登録しているbooksレコードを取得
+            json('GET', '/api/v1/books');
+
+        $phpPayload = $response->json();                    // JSON形式からPHP配列にデコード
+
+        $isbn = collect($phpPayload['data'])->first()['isbn'];  // ISBNコードを取得
+
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => $isbn,                            // 同じisbnをセット
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            ]);
+//dd($response);
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['isbn']);         // isbnに対するバリデーションエラーかを確認
+    }
+
+    /** 出版日が空文字列 **/
     public function test_api_異常系_postで空のpublished_dateのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '',                     // 発行日が空文字列
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '',                     // 出版日が空文字列
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['isbn']);     // isbnに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['published_date']);  // published_dateに対するバリデーションエラーかを確認
     }
 
     /** 発行日が日付形式でない文字列 ＊*/
     public function test_api_異常系_postで不正な日付のバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => 'invalid_date',         // 日付形式でない
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => 'invalid_date',         // 日付形式でない
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
+        $response->assertStatus(422)                        // バリデーションエラーは 422
             ->assertJsonValidationErrors(['published_date']); // published_dateに対するバリデーションエラーか確認
     }
 
     /** 発行日が認識できない日付形式 */
     public function test_api_異常系_postで認識できない日付形式のバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026年7月1日',          // 認識できない日付形式
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026年7月1日',         // 認識できない日付形式
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
+        $response->assertStatus(422)                        // バリデーションエラーは 422
             ->assertJsonValidationErrors(['published_date']); // published_dateに対するバリデーションエラーか確認
     }
 
@@ -330,18 +371,19 @@ class ApiValidationTest extends TestCase
      */
     public function test_api_異常系_postで長すぎる説明文のバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => str_repeat('A', 65536),    // text型はmax:65535なので65536文字の文字列
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)            // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => str_repeat('A', 256),     // 無指定stringはmax:255なので256文字の文字列
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
+        $response->assertStatus(422)                        // バリデーションエラーは 422
             ->assertJsonValidationErrors(['description']);  // descriptionに対するバリデーションエラーかを確認
     }
 
@@ -350,54 +392,57 @@ class ApiValidationTest extends TestCase
      */
     public function test_api_異常系_postで不正なURLのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'invalid-url',               // URL形式でない
-            'genres' => [$this->genreId],
+        $response = $this->actingAs($this->user)           // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'invalid-url',               // URL形式でない
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
+        $response->assertStatus(422)                        // バリデーションエラーは 422
             ->assertJsonValidationErrors(['image_url']);  // image_urlに対するバリデーションエラーかを確認
     }
 
     /** ジャンルIDが空 **/
     public function test_api_異常系_postで空のgenresのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [],                             // genresが空配列
+        $response = $this->actingAs($this->user)           // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [],                             // genresが空配列
         ]);
 
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['genrea']);   // genresに対するバリデーションエラーかを確認
+        $response->assertStatus(422)                             // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['genres']);   // genresに対するバリデーションエラーかを確認
     }
 
     /** 存在しないジャンルID **/
     public function test_api_異常系_postで存在しないgenresのバリデーションエラーを返す()
     {
-        $response = $this->json('POST', '/api/v1/books', [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/test.jpg',
-            'genres' => [9999],                         // 存在しないジャンルID
+        $response = $this->actingAs($this->user)           // ログインして書籍新規作成を呼び出す
+            ->json('POST', '/api/v1/books', [
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/test.jpg',
+                'user_id' => $this->user->id,               // 存在する user_id を使用
+                'genres' => [9999],                         // 存在しないジャンルID
         ]);
-
-        $response
-            ->assertStatus(422)                         // バリデーションエラーは 422
-            ->assertJsonValidationErrors(['genres']);   // genresに対するバリデーションエラーかを確認
+//dd($response);
+        $response->assertStatus(422)                        // バリデーションエラーは 422
+            ->assertJsonValidationErrors(['genres.0']);  // genres配列に対するバリデーションエラーかを確認
     }
 }

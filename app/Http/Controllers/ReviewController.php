@@ -25,7 +25,7 @@ class ReviewController extends Controller
 
         $user->likedReviews()->toggle($review->id);             // レビューのいいね状態を切り替え
 
-        return redirect()->back();                              // 前のページにリダイレクト
+        return redirect(route('books.show'));                   // 書籍詳細画面にリダイレクト
     }
 
     /**
@@ -43,12 +43,12 @@ class ReviewController extends Controller
 
         Review::create($validated);                             // バリデーション済みのデータでレビューを作成
 
-        return redirect()->back()                               // 作成後、前のページにリダイレクト
+        return redirect()->back()                               // 作成後、書籍詳細画面にリダイレクト
             ->with('success', 'レビューが作成されました。');
     }
 
     /**
-     * Display the specified resource.
+     * レビューの詳細表示
      */
     public function show(string $id)
     {
@@ -59,7 +59,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * レビュー編集画面の表示
      */
     public function edit(string $id)
     {
@@ -68,15 +68,15 @@ class ReviewController extends Controller
 //            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
 //        }
 //
-//        $review = Review::with('book')->findOrFail($id);        // 指定されたIDのレビューと紐付いた書籍情報を取得、
-//                                                                // 存在しない場合は404エラーを返す
-        $this->authorize('update', Review::findOrFail($id));      // ログインユーザーがレビューの作成者かpolicyでチェック
+        $review = Review::with('book')->findOrFail($id);        // 指定されたIDのレビューと紐付いた書籍情報を取得、
+                                                                // 存在しない場合は404エラーを返す
+        $this->authorize('edit', $review);                  // ログインユーザーがレビューの作成者かpolicyでチェック
 
         return view('reviews.edit', compact('review'));         // レビュー編集ページにレビュー情報を渡す
     }
 
     /**
-     * Update the specified resource in storage.
+     * レビュー更新処理
      */
     public function update(UpdateReviewRequest $request, string $id)
     {
@@ -85,9 +85,9 @@ class ReviewController extends Controller
 //            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
 //        }
 //
-//        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
-//                                                                // 存在しない場合は404エラーを返す
-        $this->authorize('update', Review::findOrFail($id));      // ログインユーザーがレビューの作成者かpolicyでチェック
+        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
+                                                                // 存在しない場合は404エラーを返す
+        $this->authorize('update', $review);                // ログインユーザーがレビューの作成者かpolicyでチェック
 
         $validated = $request->validated();                     // バリデーション済みのデータを取得
 
@@ -103,7 +103,7 @@ class ReviewController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * レビュー削除処理
      */
     public function destroy(string $id)
     {
@@ -112,13 +112,13 @@ class ReviewController extends Controller
 //            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
 //        }
 //
-//        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
-//                                                                // 存在しない場合は404エラーを返す
-        $this->authorize('delete', Review::findOrFail($id));      // ログインユーザーがレビューの作成者かpolicyでチェック
+        $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
+                                                                // 存在しない場合は404エラーを返す
+        $this->authorize('delete', $review);                // ログインユーザーがレビューの作成者かpolicyでチェック
 
         $review->delete();                                      // レビューを削除
 
-        return redirect()->back()                               // 削除後、前のページにリダイレクト
+        return redirect()->back()                               // 削除後、書籍詳細ページにリダイレクト
             ->with('success', 'レビューが削除されました。');
     }
 }
