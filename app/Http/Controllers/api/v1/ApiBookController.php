@@ -41,7 +41,7 @@ class ApiBookController extends Controller
 
         $book->genres()->sync($validated['genres'] ?? []);      // ジャンルIDの紐付けをピボットテーブルに保存
 
-        return new BookResource($book);                     // BookResourceを使って、作成した書籍をJSON形式で返す
+        return new BookResource($book);             // BookResourceを使って、作成した書籍をJSON形式で返す
     }
 
     /**

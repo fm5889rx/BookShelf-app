@@ -15,6 +15,12 @@ class ReviewPolicy
         //
     }
 
+    public function edit(User $user, Review $review): bool
+    {
+        // 投稿者本人なら編集を許可
+        return $user->id === $review->user_id;
+    }
+
     public function update(User $user, Review $review): bool
     {
         // 投稿者本人なら更新を許可
