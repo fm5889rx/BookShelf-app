@@ -7,7 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\SUpport\Facades\Hash;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -25,22 +25,24 @@ class AuthController extends Controller
         }
 
         // 認証失敗
-        return back()
+        return redirect(route('login'))
             ->withInput($request->only('email'))
             ->withErrors(['email' => 'メールアドレスまたはパスワードが正しくありません']);
     }
 
     /**
-     * 管理画面ログアウトの処理
+     * ログアウトの処理
      */
     public function logout(Request $request)
     {
         // セッションを破棄してログアウト
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        Auth::logout();                                 // Fortifyを通してログアウト->認証情報を削除
 
-        return redirect()->route('login');     // ログイン画面に遷移
+        $request->session()->invalidate();            // セッションIDを無効化し全てのセッションデータを削除
+
+        $request->session()->regenerateToken();         // CSRF用トークンを新しく生成
+
+        return redirect()->route('login');              // ログイン画面に遷移
     }
 
     /**
@@ -50,17 +52,24 @@ class AuthController extends Controller
     {
         // バリデーションはRegisterRequestで行われるため、ここではリクエストが有効であることが保証されている
 
-        // ユーザーの作成
-        $user = User::create([
+        $user = User::create([                          // ユーザーの新規作成
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // ユーザーをログインさせる
-        Auth::login($user);
+        if ($user) {                                    // ユーザーの新規登録に成功したか？
 
-        // 登録完了後のリダイレクト
-        return redirect()->route('books.index')->with('success', 'ユーザー登録が完了しました');
+            Auth::login($user);                         // ユーザーをログインさせる
+
+            return redirect()->route('books.index')     // 登録完了後のリダイレクト
+                ->with('success', 'ユーザー登録が完了しました');
+
+        } else {                                        // ユーザー登録失敗ならば
+
+            return redirect(route('login'))             // エラーを返してログイン画面にリダイレクト
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => '会員登録に失敗しました']);
+        }
     }
 }

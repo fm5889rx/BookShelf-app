@@ -18,14 +18,14 @@ class ReviewController extends Controller
     {
         if (!Auth::check())                                     // ログイン済みかチェック
         {
-            return redirect()->route('login');                  // 未ログインなのでログイン画面へリダイレクト
+            return redirect()->route('login');              // 未ログインなのでログイン画面へリダイレクト
         }
 
-        $user = $request->user();                               // ログインユーザーを取得
+        $user = Auth::user();                                   // ログインユーザーを取得
 
         $user->likedReviews()->toggle($review->id);             // レビューのいいね状態を切り替え
 
-        return redirect(route('books.show'));                   // 書籍詳細画面にリダイレクト
+        return redirect(route('books.show', $review->id));      // 書籍詳細画面にリダイレクト
     }
 
     /**

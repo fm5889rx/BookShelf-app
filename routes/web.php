@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
 
 // レビューのルーティング
 Route::middleware('auth')->group(function () {
-    Route::post('/reviews/{review}', [ReviewController::class, 'like'])->name('reviews.like');
+    Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
     Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
