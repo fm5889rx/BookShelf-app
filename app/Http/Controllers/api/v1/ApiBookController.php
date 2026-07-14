@@ -9,7 +9,7 @@ use App\Http\Requests\ApiUpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Auth;
+//use Illuminate\Support\Facades\Auth;
 
 class ApiBookController extends Controller
 {
@@ -31,11 +31,9 @@ class ApiBookController extends Controller
      */
     public function store(ApiStoreBookRequest $request)
     {
-        $user = Auth::user();                                   // ログインユーザー情報を取得
+//        $user = Auth::user();                                   // ログインユーザー情報を取得
 
         $validated = $request->validated();                     // バリデーション済みのデータを取得
-
-        $validated['user_id'] = $user->id ?? 1;                 // ログインユーザーIDを取得、未ログインなら1
 
         $book = Book::create($validated);                       // 書籍を新規作成
 

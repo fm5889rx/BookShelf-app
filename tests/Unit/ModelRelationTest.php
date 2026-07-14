@@ -101,7 +101,7 @@ class ModelRelationTest extends TestCase
         $user = User::factory()->create();                  // ユーザー情報を1件作成
 
         // 実行
-        $user->likedReviews()->attach($review);               // favoritesテーブルに挿入
+        $user->likedReviews()->attach($review);             // favoritesテーブルに挿入
 
         // 検証
         $this->assertTrue(                                  // リレーションができているか検証

@@ -26,6 +26,7 @@ class ApiUpdateBookRequest extends FormRequest
             'published_date' => 'required|date|date_format:Y-m-d',
             'description'    => 'nullable|string|max:255',
             'image_url'      => 'nullable|string|url|active_url',
+            'user_id'        => 'required|exists:users,id',
             'genres'         => 'required|array|min:1',
             'genres.*'       => 'integer|exists:genres,id',
         ];
@@ -53,6 +54,8 @@ class ApiUpdateBookRequest extends FormRequest
             'description.max'            => '説明は255文字以内で入力してください',
             'image_url.url'              => '無効なURLです',
             'image_url.active_url'       => '指定されたURLが見つかりません',
+            'user_id.required'           => 'ユーザーIDは必須です',
+            'user_id.exists'             => '指定されたユーザーは存在しません',
             'genres.required'            => 'ジャンルを１つ以上選択してください',
             'genres.*.exists'            => '指定されたジャンルは存在しません',
         ];
