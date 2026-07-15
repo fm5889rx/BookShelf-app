@@ -81,9 +81,11 @@ class GenreControllerTest extends TestCase
             ]));
 
         // 検証
-        $response->assertRedirect(route('genres.index'));       // ジャンル一覧画面にリダイレクトされることを確認
+        $response->assertStatus(302);                           // ステータス302を期待
 
-        $this->assertDatabaseHas('genres', [                    // データベースにレコードが書き込まれているか確認
+        $response->assertRedirect(route('genres.index'));       // 元の画面にリダイレクトされることを確認
+
+        $this->assertDatabaseHas('genres', [              // データベースにレコードが書き込まれているか確認
             'name' => 'テストジャンル',
         ]);
     }
@@ -118,7 +120,7 @@ class GenreControllerTest extends TestCase
             ]);
 
         // 検証
-        $response->assertRedirect(route('genres.show', $genre->id));  // ジャンル詳細画面にリダイレクトされることを確認
+        $response->assertRedirect(route('genres.index'));       // 元の画面にリダイレクトされることを確認
 
         $this->assertDatabaseHas('genres', [                    // データベースのレコードが更新されているか確認
             'id' => $genre->id,

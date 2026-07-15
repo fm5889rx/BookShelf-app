@@ -27,7 +27,7 @@ class ApiBookController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 書籍情報を新規作成
      */
     public function store(ApiStoreBookRequest $request)
     {
@@ -43,20 +43,20 @@ class ApiBookController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * 指定の書籍の詳細情報を取得
      */
     public function show(string $id)
     {
         $book = Book::with('genres', 'reviews.user')            // ジャンル情報とレビュー情報を取得
             ->withCount('reviews')                              // レビュー数をカウント
             ->withAvg('reviews', 'rating')                      // レビューの平均評価を計算
-            ->findOrFail($id);                               // 指定されたIDの書籍を取得、存在しない場合は404エラー
+            ->findOrFail($id);                       // 指定されたIDの書籍を取得、存在しない場合は404エラー
 
         return new BookResource($book);                         // BookResourceを使って、書籍詳細をJSON形式で返す
     }
 
     /**
-     * Update the specified resource in storage.
+     * 指定の書籍情報を更新
      */
     public function update(ApiUpdateBookRequest $request, string $id)
     {
@@ -70,7 +70,7 @@ class ApiBookController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 指定の書籍情報を削除
      */
     public function destroy(string $id)
     {
