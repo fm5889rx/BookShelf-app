@@ -35,7 +35,7 @@ class GenreController extends Controller
     {
         $validated = $request->validated();                     // バリデーション済みのデータを取得
 
-        $genre = Genre::create($validated);             // バリデーション済みのデータを使用して新しいジャンルを作成
+        $genre = Genre::create($validated);       // バリデーション済みのデータを使用して新しいジャンルを作成
 
         return redirect()->route('genres.index')                // 作成後、ジャンル一覧ページにリダイレクト
             ->with('success', 'ジャンルが作成されました。');
@@ -46,7 +46,7 @@ class GenreController extends Controller
      */
     public function show(string $id)
     {
-        $genre = Genre::findOrFail($id);            // 指定されたIDのジャンルを取得、存在しない場合は404エラーを返す
+        $genre = Genre::findOrFail($id);     // 指定されたIDのジャンルを取得、存在しない場合は404エラーを返す
 
         $books = $genre->books()->get();                        // ジャンルに関連する書籍情報を取得
 
@@ -58,9 +58,9 @@ class GenreController extends Controller
      */
     public function edit(string $id)
     {
-        $genre = Genre::findOrFail($id);            // 指定されたIDのジャンルを取得、存在しない場合は404エラーを返す
+        $genre = Genre::findOrFail($id);    // 指定されたIDのジャンルを取得、存在しない場合は404エラーを返す
 
-        return view('genres.edit', compact('genre'));           // ジャンル編集ページにジャンルデータを渡す
+        return view('genres.edit', compact('genre'));         // ジャンル編集ページにジャンルデータを渡す
     }
 
     /**
@@ -72,9 +72,9 @@ class GenreController extends Controller
 
         $genre = Genre::findOrFail($id);                        // 指定されたIDのジャンルを取得
 
-        $genre->update($validated);                             // バリデーション済みのデータでジャンルを更新
+        $genre->update($validated);                           // バリデーション済みのデータでジャンルを更新
 
-        return redirect()->route('genres.show', $genre->id)     // 更新後、ジャンル詳細ページにリダイレクト
+        return redirect()->route('genres.index')              // 更新後、ジャンル一覧ページにリダイレクト
                 ->with('success', 'ジャンルが更新されました。');
     }
 
@@ -87,7 +87,7 @@ class GenreController extends Controller
 
         $genre->delete();                                       // ジャンルを削除
 
-        return redirect()->route('genres.index')                // 削除後、ジャンル一覧ページにリダイレクト
+        return redirect()->route('genres.index')              // 削除後、ジャンル一覧ページにリダイレクト
             ->with('success', 'ジャンルが削除されました。');
     }
 }

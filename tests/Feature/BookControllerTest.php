@@ -83,7 +83,7 @@ class BookControllerTest extends TestCase
         // 検証
         $response->assertStatus(302);                           // HTTPステータスが302を期待
 
-        $response->assertRedirect('/books');                    // 成功したら書籍一覧画面へリダイレクト
+        $response->assertRedirect(route('books.index'));        // 成功したら書籍一覧画面へリダイレクト
 
         $this->assertDatabaseHas('books', [                     // データベースに保存されているか確認
             'title' => 'テストタイトル',
