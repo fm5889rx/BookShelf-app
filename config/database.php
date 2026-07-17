@@ -60,7 +60,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                MySQL::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', false),
+                Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', false),
             ]) : [],
         ],
 

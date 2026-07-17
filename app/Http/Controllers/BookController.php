@@ -8,7 +8,6 @@ use App\Models\Book;
 use App\Models\Genre;
 use Illuminate\Support\Facades\Auth;
 
-
 class BookController extends Controller
 {
     /**
@@ -26,7 +25,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        if (!Auth::check()) {                                   // ログイン済みかチェック
+        if (! Auth::check()) {                                   // ログイン済みかチェック
             return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
         }
 
@@ -44,7 +43,7 @@ class BookController extends Controller
 
         $userId = auth()->id();                                 // ログインユーザーIDを取得
 
-        if (!$userId) {                                         // ログインユーザがあるかチェック
+        if (! $userId) {                                         // ログインユーザがあるかチェック
             return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
         }
 
@@ -78,10 +77,10 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
-//        if (!Auth::check()) {                                   // ログイン済みかチェック
-//            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
-//        }
-//
+        //        if (!Auth::check()) {                                   // ログイン済みかチェック
+        //            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
+        //        }
+        //
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
         $this->authorize('edit', $book);            // ログインユーザーが書籍情報の作成者かpolicyでチェック
@@ -96,10 +95,10 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, string $id)
     {
-//        if (!Auth::check()) {                                   // ログイン済みかチェック
-//            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
-//        }
-//
+        //        if (!Auth::check()) {                                   // ログイン済みかチェック
+        //            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
+        //        }
+        //
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
         $this->authorize('update', $book);          // ログインユーザーが書籍情報の作成者かpolicyでチェック
@@ -118,10 +117,10 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-//        if (!Auth::check()) {                                   // ログイン済みかチェック
-//            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
-//        }
-//
+        //        if (!Auth::check()) {                                   // ログイン済みかチェック
+        //            return redirect()->route('login');                  // 未ログインならばログイン画面へリダイレクト
+        //        }
+        //
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
         $this->authorize('delete', $book);          // ログインユーザーが書籍情報の作成者かpolicyでチェック

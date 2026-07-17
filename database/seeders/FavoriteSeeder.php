@@ -28,9 +28,9 @@ class FavoriteSeeder extends Seeder
             while (count($bookIds) < $bookCount) {      // 3〜5件数に到達するまで繰り返す
 
                 $id = random_int(1, 11);                // ランダムな書籍IDを生成
-    
-                if (!in_array($id, $bookIds)) {         // 書籍IDの重複チェック
-    
+
+                if (! in_array($id, $bookIds)) {         // 書籍IDの重複チェック
+
                     $bookIds[] = $id;                   // 未登録IDのみ配列に保存
                 }
             }

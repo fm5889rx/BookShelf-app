@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * 書籍ージャンル中間テーブルのマイグレーション
      */
     public function up(): void
     {

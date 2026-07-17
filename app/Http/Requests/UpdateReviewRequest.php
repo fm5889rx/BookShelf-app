@@ -20,7 +20,7 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         $rules = [                                          // PUT用バリデーションルール
-            'rating'  => 'required|integer|in:1,2,3,4,5',
+            'rating' => 'required|integer|in:1,2,3,4,5',
             'comment' => 'required|string|max:255',
         ];
 
@@ -33,10 +33,10 @@ class UpdateReviewRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'rating.required'  => '評価値を選択してください',
+            'rating.required' => '評価値を選択してください',
             'comment.required' => 'コメントは必須です',
-            'comment.string'   => 'コメントは文字列で入力してください',
-            'comment.max'      => 'コメントは255文字以下で入力してください',
+            'comment.string' => 'コメントは文字列で入力してください',
+            'comment.max' => 'コメントは255文字以下で入力してください',
         ];
     }
 }

@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Book;
-use App\Models\Review;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -51,7 +49,7 @@ class User extends Authenticatable
     public function favoriteBooks(): BelongsToMany      // ユーザーーお気に入り（多対多）
     {
         return $this->belongsToMany(Book::class, 'favorites')
-                        ->withTimestamps();
+            ->withTimestamps();
     }
 
     public function likedReviews(): BelongsToMany       // お気に入りーレビュー間リレーション（多対多）

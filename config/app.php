@@ -1,5 +1,9 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Providers\FortifyServiceProvider;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -163,12 +167,12 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
+        AppServiceProvider::class,
         // App\Providers\AuthServiceProvider::class,        // 標準の認証機能は無効化する
         // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\FortifyServiceProvider::class,        // Fortifyサービスプロバイダを有効にする
+        EventServiceProvider::class,
+        RouteServiceProvider::class,
+        FortifyServiceProvider::class,        // Fortifyサービスプロバイダを有効にする
     ])->toArray(),
 
     /*

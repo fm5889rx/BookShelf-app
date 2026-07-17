@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -88,7 +87,7 @@ class AuthenticationTest extends TestCase
     {
         // 実行
         $response = $this->post(route('login'), [           // 255文字以上のメールアドレスを渡してログイン
-            'email' => str_repeat('A', 255) . '@example.com',
+            'email' => str_repeat('A', 255).'@example.com',
             'password' => 'password123',
         ]);
 
@@ -120,7 +119,7 @@ class AuthenticationTest extends TestCase
 
         $response->assertRedirect(route('login'));          // ログイン画面に戻ることを期待
 
-//        $response->assertSessionHasErrors('password');      // パスワードエラーが出ることを期待
+        //        $response->assertSessionHasErrors('password');      // パスワードエラーが出ることを期待
 
         $this->assertGuest();                               // 認証されていない状態であることを期待
     }
@@ -329,7 +328,7 @@ class AuthenticationTest extends TestCase
         // 実行
         $response = $this->post(route('register'), [        // 会員登録処理を実行
             'name' => 'テストユーザー',
-            'email' => str_repeat('A', 256) . '@example.com',  // 256文字以上のメールアドレス
+            'email' => str_repeat('A', 256).'@example.com',  // 256文字以上のメールアドレス
             'password' => 'password123',
             'password_confirmation' => 'password123',       // パスワード確認も含める
         ]);

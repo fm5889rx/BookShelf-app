@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Genre;
-use App\Models\Review;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -43,6 +40,6 @@ class Book extends Model
     public function favoriteByUser(): BelongsToMany  // 書籍情報ーお気に入り（多対多）
     {
         return $this->belongsToMany(User::class, 'favorites')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 }

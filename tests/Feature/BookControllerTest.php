@@ -46,7 +46,7 @@ class BookControllerTest extends TestCase
         // 準備
         $genres = Genre::factory()->count(3)->create();         // テスト用にジャンルデータを3件生成
 
-        $user = User::factory()->create();                      //テスト用にユーザーデータを1件生成
+        $user = User::factory()->create();                      // テスト用にユーザーデータを1件生成
 
         // 実行
         $response = $this->actingAs($user)                      // 書籍登録画面を表示
@@ -166,14 +166,14 @@ class BookControllerTest extends TestCase
         // 実行
         $response = $this->actingAs($user)                      // ログインして書籍情報更新処理を呼び出し
             ->put(route('books.update', $book->id), [
-            'title' => 'テストタイトル',
-            'author' => 'テストユーザー',
-            'isbn' => '1234567890123',
-            'published_date' => '2026-07-01',
-            'description' => 'テスト説明',
-            'image_url' => 'http://example.com/image.jpg',
-            'genres' => [$genre->id],
-        ]);
+                'title' => 'テストタイトル',
+                'author' => 'テストユーザー',
+                'isbn' => '1234567890123',
+                'published_date' => '2026-07-01',
+                'description' => 'テスト説明',
+                'image_url' => 'http://example.com/image.jpg',
+                'genres' => [$genre->id],
+            ]);
 
         // 検証
         $response->assertStatus(302);                           // HTTPステータスが302を期待

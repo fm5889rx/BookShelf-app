@@ -6,7 +6,6 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 /**
@@ -37,7 +36,7 @@ class ApiBookTest extends TestCase
         $response->assertJsonCount(3, 'data');                  // 書籍情報が3件取得できているかを確認
     }
 
-    public function test_api_書籍一覧のJSONレスポンス構造が正しい()
+    public function test_api_書籍一覧の_jso_nレスポンス構造が正しい()
     {
         // 準備
         $user = User::factory()->create();                      // テスト用にユーザーを1件作成
@@ -67,12 +66,12 @@ class ApiBookTest extends TestCase
                     'description',
                     'image_url',
                     'user_id',
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 
-    public function test_api_書籍一覧のJSONレスポンス内容が正しい()
+    public function test_api_書籍一覧の_jso_nレスポンス内容が正しい()
     {
         // 準備
         $user = User::factory()->create();                      // テスト用にユーザーを1件作成
@@ -144,14 +143,14 @@ class ApiBookTest extends TestCase
                 'description',
                 'image_url',
                 'user_id',
-            ]
+            ],
         ]);
     }
 
-    public function test_api_存在しない書籍IDの詳細商法主翼に失敗する()
+    public function test_api_存在しない書籍_i_dの詳細商法主翼に失敗する()
     {
         // 実行
-        $response = $this->json('GET', "/api/v1/books/999");    // 存在しない書籍IDでAPIを呼び出す
+        $response = $this->json('GET', '/api/v1/books/999');    // 存在しない書籍IDでAPIを呼び出す
 
         // 検証
         $response->assertStatus(404);                     // HTTPステータス404を期待（IDが見つからない）

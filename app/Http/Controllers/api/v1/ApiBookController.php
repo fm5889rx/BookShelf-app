@@ -9,7 +9,8 @@ use App\Http\Requests\ApiUpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use illuminate\Http\Resources\Json\AnonymousResourceCollection;
-//use Illuminate\Support\Facades\Auth;
+
+// use Illuminate\Support\Facades\Auth;
 
 class ApiBookController extends Controller
 {
@@ -23,7 +24,7 @@ class ApiBookController extends Controller
             ->with('genres')                                    // ジャンル情報を取得
             ->paginate(10);                                     // 10件ずつページネーション
 
-        return BookResource::collection($books);                // BookResourceを使って、書籍一覧をJSON形式で返す
+        return BookResource::collection($books);        // BookResourceを使って、書籍一覧をJSON形式で返す
     }
 
     /**
@@ -31,7 +32,7 @@ class ApiBookController extends Controller
      */
     public function store(ApiStoreBookRequest $request)
     {
-//        $user = Auth::user();                                   // ログインユーザー情報を取得
+        //        $user = Auth::user();                                   // ログインユーザー情報を取得
 
         $validated = $request->validated();                     // バリデーション済みのデータを取得
 

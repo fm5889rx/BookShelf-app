@@ -14,8 +14,9 @@ use Tests\TestCase;
  */
 class ReviewControllerTest extends TestCase
 {
-    use RefreshDatabase;                                        // データベースをリセットするトレイト
+    // データベースをリセットするトレイト
     use MakesHttpRequests;
+    use RefreshDatabase;
 
     public function test_ユーザーはレビュー編集画面を表示できる()
     {
@@ -27,7 +28,7 @@ class ReviewControllerTest extends TestCase
         $review = Review::factory()->create([                   // テスト用にuser_idとbook_idを登録したレビュー
             'book_id' => $book->id,
             'user_id' => $user->id,
-            ]);
+        ]);
 
         // 実行
         $response = $this->actingAs($user)                      // レビュー編集画面を表示
@@ -101,7 +102,6 @@ class ReviewControllerTest extends TestCase
             'comment' => $review->comment,
         ]);
     }
-
 
     public function test_ユーザーはレビューを削除できる()
     {

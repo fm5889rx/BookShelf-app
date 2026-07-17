@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,8 +16,8 @@ class FavoriteController extends Controller
         $user = Auth::user();                                   // ログインユーザーを取得
 
         $books = $user->favoriteBooks()                         // お気に入りがついている書籍情報を取得
-                    ->orderBy('id', 'asc')                      // 書籍ID順
-                    ->paginate(10);                             // ページネーション：10件/ページ
+            ->orderBy('id', 'asc')                      // 書籍ID順
+            ->paginate(10);                             // ページネーション：10件/ページ
 
         return view('favorites.index', compact('books'));       // お気に入り一覧ページを表示
     }
@@ -50,10 +49,10 @@ class FavoriteController extends Controller
     public function ranking()
     {
         $rankedBooks = Book::withCount('reviews')               // レビュー数をカウント
-                        ->withAvg('reviews', 'rating')          // レビューの平均評価を計算
-                        ->orderBy('reviews_avg_rating', 'desc') // 平均レビュー評価点の降順で並び替え
-                        ->take(10)                              // 上位10件を取得
-                        ->get();
+            ->withAvg('reviews', 'rating')          // レビューの平均評価を計算
+            ->orderBy('reviews_avg_rating', 'desc') // 平均レビュー評価点の降順で並び替え
+            ->take(10)                              // 上位10件を取得
+            ->get();
 
         return view('ranking.index', compact('rankedBooks')); // 平均レビュー評価点ランキングページを表示
     }

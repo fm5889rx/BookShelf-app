@@ -71,7 +71,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 存在しないジャンルID */
-    public function test_api_異常系_ジャンルIDが存在しない()
+    public function test_api_異常系_ジャンル_i_dが存在しない()
     {
         // 存在しない genre_id を送信してバリデーションエラーを確認
         $response = $this->json('GET', '/api/v1/books', [
@@ -129,14 +129,14 @@ class ApiValidationTest extends TestCase
     public function test_api_正常系_postで成功を返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         // 検証
@@ -153,14 +153,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで空のtitleのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => '',                              // タイトルが空文字列
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => '',                              // タイトルが空文字列
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -171,14 +171,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで長すぎるtitleのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => str_repeat('A', 256),            // max:255なので256文字の文字列
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => str_repeat('A', 256),            // max:255なので256文字の文字列
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -189,14 +189,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで空のauthorのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => '',                             // 著者が空文字列
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => '',                             // 著者が空文字列
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -207,14 +207,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで長すぎるautherのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => str_repeat('A', 256),           // max:255なので256文字の文字列
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => str_repeat('A', 256),           // max:255なので256文字の文字列
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -225,14 +225,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで空のisbnのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '',                               // isbnが空文字列
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '',                               // isbnが空文字列
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -243,14 +243,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで短いisbnのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '123456789012',                   // digits:13なので12桁の文字列
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '123456789012',                   // digits:13なので12桁の文字列
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -261,15 +261,15 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで長いisbnのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '12345678901234',                 // digits:13なので14桁の文字列
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
-            ]);
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '12345678901234',                 // digits:13なので14桁の文字列
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
+        ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
             ->assertJsonValidationErrors(['isbn']);         // isbnに対するバリデーションエラーかを確認
@@ -278,7 +278,7 @@ class ApiValidationTest extends TestCase
     /** 同じISBNコード **/
     public function test_api_異常系_postで同じisbnのバリデーションエラーを返す()
     {
-        $response = $this->actingAs($this->user)-> 
+        $response = $this->actingAs($this->user)->
                  // すでに登録しているbooksレコードを取得
             json('GET', '/api/v1/books');
 
@@ -287,16 +287,16 @@ class ApiValidationTest extends TestCase
         $isbn = collect($phpPayload['data'])->first()['isbn'];  // ISBNコードを取得
 
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => $isbn,                            // 同じisbnをセット
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
-            ]);
-//dd($response);
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => $isbn,                            // 同じisbnをセット
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
+        ]);
+        // dd($response);
         $response->assertStatus(422)                        // バリデーションエラーは 422
             ->assertJsonValidationErrors(['isbn']);         // isbnに対するバリデーションエラーかを確認
     }
@@ -305,14 +305,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで空のpublished_dateのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '',                     // 出版日が空文字列
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '',                     // 出版日が空文字列
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -323,14 +323,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで不正な日付のバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => 'invalid_date',         // 日付形式でない
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => 'invalid_date',         // 日付形式でない
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -341,14 +341,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで認識できない日付形式のバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026年7月1日',         // 認識できない日付形式
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026年7月1日',         // 認識できない日付形式
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -361,14 +361,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで長すぎる説明文のバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => str_repeat('A', 256),     // 無指定stringはmax:255なので256文字の文字列
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => str_repeat('A', 256),     // 無指定stringはmax:255なので256文字の文字列
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -378,17 +378,17 @@ class ApiValidationTest extends TestCase
     /** 不正なURL
      * ※image_urlはnullable
      */
-    public function test_api_異常系_postで不正なURLのバリデーションエラーを返す()
+    public function test_api_異常系_postで不正なurlのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'invalid-url',               // URL形式でない
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [$this->genre->id],             // 存在する genre_id を使用
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'invalid-url',               // URL形式でない
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [$this->genre->id],             // 存在する genre_id を使用
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -400,13 +400,13 @@ class ApiValidationTest extends TestCase
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [],                             // genresが空配列
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [],                             // genresが空配列
         ]);
 
         $response->assertStatus(422)                             // バリデーションエラーは 422
@@ -417,14 +417,14 @@ class ApiValidationTest extends TestCase
     public function test_api_異常系_postで存在しないgenresのバリデーションエラーを返す()
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/test.jpg',
-                'user_id' => $this->user->id,               // 存在する user_id を使用
-                'genres' => [9999],                         // 存在しないジャンルID
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/test.jpg',
+            'user_id' => $this->user->id,               // 存在する user_id を使用
+            'genres' => [9999],                         // 存在しないジャンルID
         ]);
 
         $response->assertStatus(422)                        // バリデーションエラーは 422
@@ -439,7 +439,7 @@ class ApiValidationTest extends TestCase
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
-        $response = $this->json('PUT',"/api/v1/books/{$bookId}", [  // 書籍更新機能を呼び出す
+        $response = $this->json('PUT', "/api/v1/books/{$bookId}", [  // 書籍更新機能を呼び出す
             'title' => 'テストタイトル',
             'author' => 'テストユーザー',
             'isbn' => '1234567890123',
@@ -685,7 +685,7 @@ class ApiValidationTest extends TestCase
     /** 不正なURL
      * ※image_urlはnullable
      */
-    public function test_api_異常系_putで不正なURLのバリデーションエラーを返す()
+    public function test_api_異常系_putで不正な_ur_lのバリデーションエラーを返す()
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 

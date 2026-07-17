@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 class UpdateGenreRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * バリデーションルールの定義
      */
     public function authorize(): bool
     {
@@ -25,8 +25,9 @@ class UpdateGenreRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('genres', 'name')->ignore($this->id),
-            ]
+                Rule::unique('genres', 'name')                      // 自分自身を除いて一意性をチェック
+                    ->ignore($this->route('genre')),
+            ],
         ];
     }
 
@@ -39,7 +40,7 @@ class UpdateGenreRequest extends FormRequest
             'name.required' => 'ジャンル名は必須です',
             'name.string' => 'ジャンル名は文字列で入力して下さい',
             'name.max' => 'ジャンル名は255文字以内で入力して下さい',
-            'name.unique' => 'このジャンル名は既に存在します',
+            'name.unique' => 'このジャンル名は既に使われています',
         ];
     }
 }
