@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
-use App\Http\Requests\StoreBookRequest;
-use App\Http\Requests\UpdateBookRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
@@ -48,9 +48,9 @@ class BookValidationTest extends TestCase
         $this->validData['genres'] = $this->genreIds;       // ジャンル配列を書籍情報に追加
     }
 
-    /**-------------------------------------------------------------------------------------------------
+    /**-----------------------------------------------------
      * 書籍新規作成（store）バリデーションチェック
-     *------------------------------------------------------------------------------------------------*/
+     *----------------------------------------------------*/
     /** 正常値を渡す **/
     public function test_書籍新規作成_バリデーションチェック_正常系()
     {
@@ -134,7 +134,7 @@ class BookValidationTest extends TestCase
      * ISBNコード（isbn）関係
      */
     /** ISBNコードが無い **/
-    public function test_書籍新規作成_ISBNが無い()
+    public function test_書籍新規作成_isb_nが無い()
     {
         // 準備
         $rules = (new StoreBookRequest)->rules();           // バリデーションルールを取得する
@@ -149,7 +149,7 @@ class BookValidationTest extends TestCase
     }
 
     /** ISBNコードが13桁でない **/
-    public function test_書籍新規作成_ISBNが12桁()
+    public function test_書籍新規作成_isb_nが12桁()
     {
         // 準備
         $rules = (new StoreBookRequest)->rules();           // バリデーションルールを取得する
@@ -164,7 +164,7 @@ class BookValidationTest extends TestCase
     }
 
     /** ISBNコードが13桁でない **/
-    public function test_書籍新規作成_ISBNが14桁()
+    public function test_書籍新規作成_isb_nが14桁()
     {
         // 準備
         $rules = (new StoreBookRequest)->rules();           // バリデーションルールを取得する
@@ -179,7 +179,7 @@ class BookValidationTest extends TestCase
     }
 
     /** ISBNコードがユニークでない **/
-    public function test_書籍新規作成_ISBNがユニークでない()
+    public function test_書籍新規作成_isb_nがユニークでない()
     {
         // 準備
         $rules = (new StoreBookRequest)->rules();           // バリデーションルールを取得する
@@ -233,12 +233,12 @@ class BookValidationTest extends TestCase
      * ※image_urlはtext/nullable
      */
     /** 画像URLが長すぎる **/
-    public function test_書籍新規作成_画像URLが長すぎる()
+    public function test_書籍新規作成_画像urlが長すぎる()
     {
         // 準備
         $rules = (new StoreBookRequest)->rules();           // バリデーションルールを取得する
 
-        $this->validData['image_url'] = 'http://' . str_repeat('A', 249);  // 画像URLがURL形式で256文字の文字列
+        $this->validData['image_url'] = 'http://'.str_repeat('A', 249);  // 画像URLがURL形式で256文字の文字列
 
         // 実行
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
@@ -248,7 +248,7 @@ class BookValidationTest extends TestCase
     }
 
     /** 画像URLがURL形式でない **/
-    public function test_書籍新規作成_画像URLがURL形式でない()
+    public function test_書籍新規作成_画像urlがurl形式でない()
     {
         // 準備
         $rules = (new StoreBookRequest)->rules();           // バリデーションルールを取得する
@@ -277,9 +277,9 @@ class BookValidationTest extends TestCase
 
     }
 
-    /**-------------------------------------------------------------------------------------------------
+    /**-----------------------------------------------------
      * 書籍更新（update）バリデーションチェック
-     *------------------------------------------------------------------------------------------------*/
+     *----------------------------------------------------*/
     /** 正常値を渡す **/
     public function test_書籍更新_バリデーションチェック_正常系()
     {
@@ -363,7 +363,7 @@ class BookValidationTest extends TestCase
      * ISBNコード（isbn）関係
      */
     /** ISBNコードが無い **/
-    public function test_書籍更新_ISBNが無い()
+    public function test_書籍更新_isb_nが無い()
     {
         // 準備
         $rules = (new UpdateBookRequest)->rules();          // バリデーションルールを取得する
@@ -378,7 +378,7 @@ class BookValidationTest extends TestCase
     }
 
     /** ISBNコードが13桁でない **/
-    public function test_書籍更新_ISBNが12桁()
+    public function test_書籍更新_isb_nが12桁()
     {
         // 準備
         $rules = (new UpdateBookRequest)->rules();          // バリデーションルールを取得する
@@ -393,7 +393,7 @@ class BookValidationTest extends TestCase
     }
 
     /** ISBNコードが13桁でない **/
-    public function test_書籍更新_ISBNが14桁()
+    public function test_書籍更新_isb_nが14桁()
     {
         // 準備
         $rules = (new UpdateBookRequest)->rules();          // バリデーションルールを取得する
@@ -445,12 +445,12 @@ class BookValidationTest extends TestCase
      * ※image _urlはtext/nullable
      */
     /** 画像URLが長すぎる **/
-    public function test_書籍更新_画像URLが長すぎる()
+    public function test_書籍更新_画像urlが長すぎる()
     {
         // 準備
         $rules = (new UpdateBookRequest)->rules();          // バリデーションルールを取得する
 
-        $this->validData['image_url'] = 'http://' . str_repeat('A', 249);  // 画像URLがURL形式で256文字の文字列
+        $this->validData['image_url'] = 'http://'.str_repeat('A', 249);  // 画像URLがURL形式で256文字の文字列
 
         // 実行
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
@@ -460,7 +460,7 @@ class BookValidationTest extends TestCase
     }
 
     /** 画像URLがURL形式でない **/
-    public function test_書籍更新_画像URLがURL形式でない()
+    public function test_書籍更新_画像urlが_url形式でない()
     {
         // 準備
         $rules = (new UpdateBookRequest)->rules();          // バリデーションルールを取得する

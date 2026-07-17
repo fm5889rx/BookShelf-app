@@ -17,7 +17,7 @@ class ModelRelationTest extends TestCase
      * BookーGenre間 多対多リレーション
      */
     /** Book側から検証**/
-    public function test_多対多リレーション_Book側()
+    public function test_多対多リレーション_book側()
     {
         // 準備
         $book = Book::factory()->create();                  // 書籍情報1件を作成
@@ -37,7 +37,7 @@ class ModelRelationTest extends TestCase
     }
 
     /** Genre側から検証**/
-    public function test_多対多リレーション_Genre側()
+    public function test_多対多リレーション_genre側()
     {
         // 準備
         $book = Book::factory()->create();                  // 書籍情報1件を作成

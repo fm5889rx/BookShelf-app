@@ -3,12 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Book;
-use App\Models\Genre;
 use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Override;
 use Tests\TestCase;
 
 /**
@@ -45,8 +42,8 @@ class OtherFunctionsTest extends TestCase
             'user_id' => $user->id,
         ]);
 
-         // 実行
-         $response = $this->actingAs($user)                     // 渡した書籍情報のお気に入りを設定する
+        // 実行
+        $response = $this->actingAs($user)                     // 渡した書籍情報のお気に入りを設定する
             ->post(route('favorites.toggle', $book->id));
 
         // 検証
@@ -133,7 +130,7 @@ class OtherFunctionsTest extends TestCase
         $response->assertStatus(302);                       // HTTPステータスは302を期待（リダイレクト）
 
         $response
-            ->assertRedirect(route('books.show', $review->id));// 書籍詳細画面にリダイレクトしているか確認
+            ->assertRedirect(route('books.show', $review->id)); // 書籍詳細画面にリダイレクトしているか確認
 
         $this->assertDatabaseHas('review_likes', [      // favoritesテーブルにレコードが書き込まれたか確認
             'review_id' => $review->id,
@@ -166,7 +163,7 @@ class OtherFunctionsTest extends TestCase
         $response->assertStatus(302);                       // HTTPステータスは302を期待（リダイレクト）
 
         $response
-            ->assertRedirect(route('books.show', $review->id));// 書籍詳細画面にリダイレクトしているか確認
+            ->assertRedirect(route('books.show', $review->id)); // 書籍詳細画面にリダイレクトしているか確認
 
         $this->assertDatabaseMissing('review_likes', [  // favoritesテーブルからレコードが削除されたか確認
             'review_id' => $review->id,

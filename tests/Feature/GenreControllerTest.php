@@ -35,7 +35,7 @@ class GenreControllerTest extends TestCase
 
     public function test_ユーザーはジャンル詳細を取得できる()
     {
-        //準備
+        // 準備
         $user = User::factory()->create();                      // テスト用にユーザーを1件作成
 
         $genre = Genre::factory()->create();                    // テスト用にジャンルを1件作成

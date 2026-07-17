@@ -1,8 +1,6 @@
 <?php
 
-use Doctrine\DBAL\Schema\Index;
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,12 +14,11 @@ use Illuminate\Support\Facades\Route;
 /**
  * Controllerクラスの使用宣言
  */
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ReviewController;
-use Symfony\Component\Routing\Annotation\Route as AnnotationRoute;
+use Illuminate\Support\Facades\Route;
 
 /**
  * ルーティング設定

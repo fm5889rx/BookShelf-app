@@ -26,8 +26,8 @@ erDiagram
     varchar(255)    author
     varchar(13)     isbn
     timestamp       published_date
-    text            description
-    text            image_url
+    string          description
+    string          image_url
     bigint          user_id             FK
     timestamp       created_at
     timestamp       updated_at
@@ -72,12 +72,6 @@ erDiagram
     bigint          review_id           FK
     timestamp       created_at
     timestamp       updated_at
-  }
-
-  password_reset_tokens {
-    string          email               PK
-    string          token
-    timestamp       created_at
   }
 
 ```

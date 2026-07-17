@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Models\Review;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
+use App\Models\Review;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
@@ -114,7 +114,7 @@ class ReviewValidationTest extends TestCase
      * 書籍ID（book_id）関係
      */
     /** 書籍IDが存在しない **/
-    public function test_レビュー更新_存在しない書籍ID()
+    public function test_レビュー更新_存在しない書籍_id()
     {
         // 準備
         $this->validData = Review::factory()->make();       // テスト用のレビューレコードを1件生成
@@ -129,6 +129,7 @@ class ReviewValidationTest extends TestCase
         // 判定
         $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
     }
+
     /**-------------------------------------------------------------------------------------------------
      * レビュー更新（update）バリデーションチェック
      *------------------------------------------------------------------------------------------------*/

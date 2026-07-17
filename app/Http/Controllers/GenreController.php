@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Genre;
 use App\Http\Requests\StoreGenreRequest;
 use App\Http\Requests\UpdateGenreRequest;
-use Illuminate\Http\Request;
+use App\Models\Genre;
 
 class GenreController extends Controller
 {
@@ -48,7 +47,7 @@ class GenreController extends Controller
     {
         $genre = Genre::findOrFail($id);     // 指定されたIDのジャンルを取得、存在しない場合は404エラーを返す
 
-        $books = $genre->books()->get();                        // ジャンルに関連する書籍情報を取得
+        $books = $genre->books()->paginate(10);    // ジャンルに関連する書籍情報をページネーション付きで取得
 
         return view('genres.show', compact('genre', 'books'));  // ジャンル詳細ページにジャンルデータと関連書籍データを渡す
     }
@@ -75,7 +74,7 @@ class GenreController extends Controller
         $genre->update($validated);                           // バリデーション済みのデータでジャンルを更新
 
         return redirect()->route('genres.index')              // 更新後、ジャンル一覧ページにリダイレクト
-                ->with('success', 'ジャンルが更新されました。');
+            ->with('success', 'ジャンルが更新されました。');
     }
 
     /**

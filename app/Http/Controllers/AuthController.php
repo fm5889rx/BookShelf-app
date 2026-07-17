@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-   /**
+    /**
      * ユーザーログインの処理
      */
     public function login(LoginRequest $request)

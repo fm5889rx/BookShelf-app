@@ -26,7 +26,7 @@ class StoreGenreRequest extends FormRequest
                 'string',
                 'max:50',
                 Rule::unique('genres', 'name'),
-            ]
+            ],
         ];
     }
 
@@ -39,7 +39,7 @@ class StoreGenreRequest extends FormRequest
             'name.required' => 'ジャンル名は必須です',
             'name.string' => 'ジャンル名は文字列で入力して下さい',
             'name.max' => 'ジャンル名は50文字以内で入力して下さい',
-            'name.unique' => 'このジャンル名は既に存在します',
+            'name.unique' => 'このジャンル名は既に使われています',
         ];
     }
 }

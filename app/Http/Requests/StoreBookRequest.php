@@ -20,14 +20,14 @@ class StoreBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'          => 'required|string|max:255',
-            'author'         => 'required|string|max:255',
-            'isbn'           => 'required|string|digits:13|unique:books,isbn',
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|string|digits:13|unique:books,isbn',
             'published_date' => 'required|date|date_format:Y-m-d',
-            'description'    => 'nullable|string|max:255',
-            'image_url'      => 'nullable|url|active_url',
-            'genres'         => 'required|array|min:1',
-            'genres.*'       => 'integer|exists:genres,id',
+            'description' => 'nullable|string|max:255',
+            'image_url' => 'nullable|url|active_url',
+            'genres' => 'required|array|min:1',
+            'genres.*' => 'integer|exists:genres,id',
         ];
     }
 
@@ -37,24 +37,24 @@ class StoreBookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required'             => '書籍名は必須です',
-            'title.string'               => '書籍名は文字列で入力してください',
-            'title.max'                  => '書籍名は255文字以下で入力してください',
-            'author.required'            => '著者は必須です',
-            'author.string'              => '著者は文字列で入力してください',
-            'author.max'                 => '著者は255文字以下で入力してください',
-            'isbn.required'              => 'ISBNコードは必須です',
-            'isbn.digits'                => 'ISBNコードは13桁の数字で入力してください',
-            'isbn.unique'                => 'このISBNコードは既に使われています',
-            'published_date.required'    => '出版日は必須です',
-            'published_at.date'          => '出版日は有効な日付形式で入力してください',
-            'published_date.date_format' => '出版日はYYYY-MM/-DD形式で入力してください',
-            'description.string'         => '説明は文字列で入力してください',
-            'description.max'            => '説明は255文字以下で入力してください',
-            'image_url.url'              => '無効なURLです',
-            'image_url.active_url'       => '指定されたURLが見つかりません',
-            'genres.required'            => 'ジャンルを１つ以上選択してください',
-            'genres.*.exists'            => '指定されたジャンルは存在しません',
+            'title.required' => '書籍名は必須です',
+            'title.string' => '書籍名は文字列で入力してください',
+            'title.max' => '書籍名は255文字以下で入力してください',
+            'author.required' => '著者は必須です',
+            'author.string' => '著者は文字列で入力してください',
+            'author.max' => '著者は255文字以下で入力してください',
+            'isbn.required' => 'ISBNコードは必須です',
+            'isbn.digits' => 'ISBNコードは13桁の数字で入力してください',
+            'isbn.unique' => 'このISBNコードは既に使われています',
+            'published_date.required' => '出版日は必須です',
+            'published_at.date' => '出版日は有効な日付形式で入力してください',
+            'published_date.date_format' => '出版日はYYYY/MM/DD形式で入力してください',
+            'description.string' => '説明は文字列で入力してください',
+            'description.max' => '説明は255文字以下で入力してください',
+            'image_url.url' => '無効なURLです',
+            'image_url.active_url' => '指定されたURLが見つかりません',
+            'genres.required' => 'ジャンルを１つ以上選択してください',
+            'genres.*.exists' => '指定されたジャンルは存在しません',
         ];
     }
 }

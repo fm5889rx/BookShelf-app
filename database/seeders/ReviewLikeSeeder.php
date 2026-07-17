@@ -15,7 +15,7 @@ class ReviewLikeSeeder extends Seeder
     {
         // 全レビューに対して処理
         Review::chunk(10, function ($reviews) {
-            //連想配列から順に取り出す
+            // 連想配列から順に取り出す
             foreach ($reviews as $review) {
 
                 // 登録ユーザー数を取得
@@ -31,7 +31,7 @@ class ReviewLikeSeeder extends Seeder
                 $possibleIds = array_diff($possibleIds, [$review->user_id]);
 
                 // 配列が空の時は次のループへ
-                if (!count($possibleIds)) {
+                if (! count($possibleIds)) {
                     continue;
                 }
 
@@ -42,7 +42,7 @@ class ReviewLikeSeeder extends Seeder
                 $selectedIds = array_rand(array_flip($possibleIds), $userCount);
 
                 // array_randが1だけの場合はスカラになるので配列に揃える
-                $selectedIds = (array)$selectedIds;
+                $selectedIds = (array) $selectedIds;
 
                 // レコード書き込み
                 $review->likedByUsers()->syncWithoutDetaching($selectedIds);

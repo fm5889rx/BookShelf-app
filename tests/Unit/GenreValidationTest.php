@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Models\Genre;
 use App\Http\Requests\StoreGenreRequest;
 use App\Http\Requests\UpdateGenreRequest;
+use App\Models\Genre;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
@@ -12,7 +12,6 @@ use Tests\TestCase;
 /**
  * ジャンルのバリデーションチェック単体テスト
  */
-
 class GenreValidationTest extends TestCase
 {
     use RefreshDatabase;                                    // データベースのリフレッシュを行うトレイトを使用
@@ -25,9 +24,9 @@ class GenreValidationTest extends TestCase
 
     protected $validData;                                   // テストで使用する書籍情報（正常値）
 
-     /**-------------------------------------------------------------------------------------------------
-     * ジャンル新規作成（store）バリデーションチェック
-     *------------------------------------------------------------------------------------------------*/
+    /**-------------------------------------------------------------------------------------------------
+    * ジャンル新規作成（store）バリデーションチェック
+    *------------------------------------------------------------------------------------------------*/
     /** 正常値を渡す **/
     public function test_ジャンル新規作成_バリデーションチェック_正常系()
     {
