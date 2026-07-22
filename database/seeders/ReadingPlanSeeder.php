@@ -6,7 +6,6 @@ use App\Enums\ReadingPlanStatus;
 use App\Models\Book;
 use App\Models\ReadingPlan;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
@@ -18,90 +17,92 @@ class ReadingPlanSeeder extends Seeder
 {
     public function run(): void
     {
-        $desired = 9;          // 生成したいレコード数
+        $desired = 9;                                       // 生成したいレコード数
 
-        $created = 0;         // 成功した回数
+        $created = 0;                                       // 成功した回数
 
-        while ($created < $desired) {
+        while ($created < $desired) {                       // 指定件数に到達するまで繰り返す
 
-            // ランダムにユーザー・本を取得
-            if ($created < 5){
-                $user = User::find(1);
+            if ($created < 5){                              // 生成レコード数が5件以下のとき
 
-            } else {
-                $user = User::find(2);
+                $user = User::find(1);                      // ユーザー１の情報を取得
+
+            } else {                                        // ６件目以降
+    
+                $user = User::find(2);                      // ユーザー2の情報を取得
+
             }
 
-            $book = Book::inRandomOrder()->first();
+            $book = Book::inRandomOrder()->first();         // ランダムな書籍情報を取得
 
-            // firstOrCreate で重複を自動で回避
-            $plan = ReadingPlan::firstOrCreate(
+            $plan = ReadingPlan::firstOrCreate(             // firstOrCreate で重複を自動で回避
                 [
-                    'user_id' => $user->id,
+                    'user_id' => $user->id,                 // ユーザーIDをセット
 
-                    'book_id' => $book->id,
-                ],
-                [
-                    'start_date' => Carbon::today()->subDays(rand(0, 5)),
+                    'book_id' => $book->id,                 // 書籍IDをセット
 
-                    'target_date'=> Carbon::today()->addDays(rand(5, 10)),
+                    'start_date' => Carbon::today()->subDays(rand(0, 5)), // Seeder実行日からランダムに
+                                                                          // 過去の日付をセット
+                    'target_date'=> Carbon::today()->addDays(rand(5, 10)), // Seeder実行日からランダム
 
-                    'status' => ReadingPlanStatus::INACTIVE,
+                    'status' => ReadingPlanStatus::INACTIVE, // ステータス初期値は未読書とする
                 ],
             );
 
-            switch ($created) {
+            switch ($created) {                             // 生成件数によってステータスの綾井を変える
 
-                case 0:
-                    $plan->status = ReadingPlanStatus::NOPLAN;
+                case 0:                                     // レコード1
+                    $plan->status = ReadingPlanStatus::NOPLAN; // ステータスを未計画に書き換える
 
-                    $plan->save();
+                    $plan->save();                          // レコードに保存
 
-                    break;
+                    break;                                  // 次の処理へ
 
-                case 1:
-                    $plan->status = ReadingPlanStatus::INACTIVE;
+                case 1:                                     // レコード2
+                    $plan->status = ReadingPlanStatus::INACTIVE; // ステータスを未読書に書き換える
 
-                    $plan->save();
+                    $plan->save();                          // レコードに保存
 
-                    break;
+                    break;                                  // 次の処理へ
 
-                case 2:
-                    $plan->status = ReadingPlanStatus::ACTIVE;
+                case 2:                                     // レコード3
+                    $plan->status = ReadingPlanStatus::ACTIVE; // ステータスを読書中に書き換える
 
-                    $plan->save();
+                    $plan->save();                          // レコードに保存
 
-                    break;
+                    break;                                  // 次の処理へ
 
-                case 3:
-                    $plan->status = ReadingPlanStatus::COMPLETE;
+                case 3:                                     // レコード4
+                    $plan->status = ReadingPlanStatus::COMPLETE; // ステータスを読了に書き換える
 
-                    $plan->save();
+                    $plan->save();                          // レコードに保存
 
-                    break;
+                    break;                                  // 次の処理へ
 
-                case 4:
-                    $plan->status = ReadingPlanStatus::PAUSE;
+                case 4:                                     // レコード5
+                    $plan->status = ReadingPlanStatus::PAUSE; // ステータスを一時中断に書き換える
 
-                    $plan->save();
+                    $plan->save();                          // レコードに保存
 
-                    break;
+                    break;                                  // 次の処理へ
 
-                default:
-                    $cases = ReadingPlanStatus::cases();
+                default:                                    // それ以外
+                    $cases = ReadingPlanStatus::cases();    // ステータスenum配列を取得
 
-                    $random = $cases[array_rand($cases)];
+                    $random = $cases[array_rand($cases)];   // 配列からランダムにステータスを取得
 
-                    $plan->status = $random->value;
+                    $plan->status = $random->value;         // ステータスをランダムなステータスに書き換える
 
-                    $plan->save();
+                    $plan->save();                          // レコードに保存
 
-                    break;
+                    break;                                  // 次の処理へ
             }
 
             // 既に存在した場合は firstOrCreate がそのまま返すので、成功したかどうかを判定する
             if ($plan->wasRecentlyCreated) {
-                $created++;
+
+                $created++;                                 // 作成済みカウントを更新
+    
             }
         }
     }
