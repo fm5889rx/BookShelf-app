@@ -274,6 +274,11 @@ sail up -d
 sail artisan key:generate
 ```
 
+- Laravel Sanctumのマイグレーションファイルを公開
+```
+sail artisan vendor:publish --tag="sanctum-migration"
+```
+
 - データベースの初期構築
 ```
 # マイグレーション実行
