@@ -5,14 +5,10 @@ erDiagram
   books ||--o{ favorites : "1つの書籍情報は0以上のお気に入りを持つ"
   books ||--|{ book_genre : "1つの書籍情報は1以上のジャンルを持つ"
   genres ||--|{ book_genre : "1つのジャンルは1以上の書籍情報を持つ"
-  users ||--o{ reviews : "1つのユーザーIDは0以上のレビューを持つ"
-  users ||--o{ favorites : "1つのユーザーIDは0以上のお気に入りを持つ"
-  users ||--o{ review_likes : "1つのユーザーは0以上のいいねをほつ"
-  reviews ||--o{ review_likes : "1つのレビューは0以上のいいねを持つ"
-  users ||--o{ reading_plans : "1つのユーザーは0以上の読書計画を持つ"
-  books ||--o{ reading_plans : "1つの書籍情報は0以上の読書計画を持つ"
-  users ||--o{ notifications : "1つのユーザーは0以上の通知を持つ"
-
+  users ||--o{ reviews : "１つのユーザーIDは0以上のレビューを持つ"
+  users ||--o{ favorites : "１つのユーザーIDは0以上のお気に入りを持つ"
+  users ||--o{ review_likes : "１つのユーザーは0以上のいいねをほつ"
+  reviews ||--o{ review_likes : "１つのレビューは0以上のいいねを持つ"
 
   users {
     bigint          id                  PK
@@ -29,7 +25,7 @@ erDiagram
     varchar(255)    title
     varchar(255)    author
     varchar(13)     isbn
-    date            published_date
+    timestamp       published_date
     string          description
     string          image_url
     bigint          user_id             FK
@@ -76,27 +72,6 @@ erDiagram
     bigint          review_id           FK
     timestamp       created_at
     timestamp       updated_at
-  }
-
-  reading_plans {
-    bigint          id                  PK
-    bigint          user_id             FK
-    bigint          book_id             FK
-    date            start_date
-    date            target_date
-    string          status
-    timestamp       completed_at
-  }
-
-  notifications {
-    bigint          id                  PK
-    bigint          user_id             FK
-    time            timing
-    varchar(255)    title
-    varchar(255)    body
-    string          status
-    created_at      timestamp
-    updated_at      timestamp
   }
 
 ```

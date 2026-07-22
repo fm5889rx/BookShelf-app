@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ReviewSeeder::class,            // レビュー
             FavoriteSeeder::class,          // お気に入り
             ReviewLikeSeeder::class,        // いいね
+            ReadingPlanSeeder::class,       // Advanced：読書計画
         ]);
     }
 }
