@@ -34,7 +34,7 @@ class ReadingPlanFactory extends Factory
     public function reading(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' -> ReadingPlanStatus::ACTIVE,
+            'status' => ReadingPlanStatus::ACTIVE,
         ]);
     }
 }

@@ -28,6 +28,9 @@ class ReadingPlan extends Model
         'completed_at',
     ];
 
+    /**
+     * 使用変数のキャスト定義
+     */
     protected $casts = [
         'start_date' => 'date',
         'target_date' => 'date',
