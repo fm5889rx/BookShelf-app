@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Bookモデル定義
+ */
 class Book extends Model
 {
     use HasFactory;
@@ -22,6 +25,14 @@ class Book extends Model
         'description',
         'image_url',
         'user_id',
+    ];
+
+    /**
+     * Advanced:
+     * キャスト宣言
+     */
+    protected $casts = [
+        'published_date' => 'datetime',
     ];
 
     /**

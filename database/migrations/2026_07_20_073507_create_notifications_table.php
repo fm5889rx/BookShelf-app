@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Advanced:
+     * 通知notificationsテーブル定義
      */
     public function up(): void
     {
@@ -17,7 +18,9 @@ return new class extends Migration
             $table->time('timing');
             $table->string('title', 255);
             $table->string('body', 255);
-            $table->unsignedTinyInteger('status');
+            $table->unsignedBigInteger('notifiable_id');
+            $table->unsignedTinyInteger('notifiable_type');
+            $table->timestamp('read_at');
             $table->timestamps();
         });
     }
