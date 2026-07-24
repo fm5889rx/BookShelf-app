@@ -8,6 +8,7 @@ use App\Models\ReadingPlan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use PDOException;
 
 /**
  * Advanced:
@@ -28,26 +29,37 @@ class ReadingPlanSeeder extends Seeder
                 $user = User::find(1);                      // ユーザー１の情報を取得
 
             } else {                                        // ６件目以降
-    
+
                 $user = User::find(2);                      // ユーザー2の情報を取得
 
             }
 
             $book = Book::inRandomOrder()->first();         // ランダムな書籍情報を取得
 
-            $plan = ReadingPlan::firstOrCreate(             // firstOrCreate で重複を自動で回避
-                [
-                    'user_id' => $user->id,                 // ユーザーIDをセット
+            try {                                           // exeption監視
 
-                    'book_id' => $book->id,                 // 書籍IDをセット
+                $plan = ReadingPlan::firstOrCreate(         // firstOrCreate で重複を自動で回避
+                    [
+                        'user_id' => $user->id,             // ユーザーIDをセット
 
-                    'start_date' => Carbon::today()->subDays(rand(0, 5)), // Seeder実行日からランダムに
-                                                                          // 過去の日付をセット
-                    'target_date'=> Carbon::today()->addDays(rand(5, 10)), // Seeder実行日からランダム
+                        'book_id' => $book->id,             // 書籍IDをセット
 
-                    'status' => ReadingPlanStatus::INACTIVE, // ステータス初期値は未読書とする
-                ],
-            );
+                        'start_date' => Carbon::today()->subDays(rand(0, 5)), // Seeder実行日から
+                                                                        // ランダムに過去の日付をセット
+                        'target_date'=> Carbon::today()->addDays(rand(5, 10)), // Seeder実行日から
+                                                                        // ランダムに未来の日付をセット
+
+                        'status' => ReadingPlanStatus::INACTIVE, // ステータス初期値は未読書とする
+                    ],
+                );
+            } catch (PDOException $e) {                     // SQL-exeption発生
+
+                if ($e->getCode() == 23000) {               // user_idとbook＿idの組み合わせがユニークで
+                                                            // 時にSQLSTATE(23000)が発生
+                    continue;                               // 以下の処理をスキップして次回ループを実行
+                }
+            }
+
 
             switch ($created) {                             // 生成件数によってステータスの綾井を変える
 

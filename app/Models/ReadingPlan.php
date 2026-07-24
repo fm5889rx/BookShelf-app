@@ -35,6 +35,7 @@ class ReadingPlan extends Model
         'start_date' => 'date',
         'target_date' => 'date',
         'status' => ReadingPlanStatus::class,
+        'completed_at' => 'datetime',
     ];
 
     /**
