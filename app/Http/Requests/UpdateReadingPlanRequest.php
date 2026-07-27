@@ -24,11 +24,7 @@ class UpdateReadingPlanRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'target_date' => [
-                'required',
-                'date',
-                'date_format:Y-m-d',
-            ],
+            'target_date' => 'required|date|date_format:Y-m-d',
         ];
 
         return $rules;

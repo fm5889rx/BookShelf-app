@@ -41,14 +41,14 @@ class ReadingPlan extends Model
     /**
      * リレーション定義
      */
-    public function book(): BelongsTo                  // 書籍情報ー読書計画間リレーション(多対１)
+    public function book(): BelongsTo                   // 書籍情報ー読書計画間リレーション(多対１)
     {
         return $this->belongsTo(Book::class);
     }
 
     public function user(): BelongsTo                   // 読書計画ーユーザー間リレーション（多対１）
     {
-        return $this->belongsTo(User::class);
+        return $this->BelongsTo(User::class);
     }
 
     public function notification(): HasMany             // 通知ー読書計画間リレーション（１対多）

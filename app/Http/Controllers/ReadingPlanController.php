@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
+use Illuminate\Validation\Rule;
+
+
 class ReadingPlanController extends Controller
 {
     protected $currentStatus;
@@ -24,8 +27,15 @@ class ReadingPlanController extends Controller
     /**
      *読書計画一覧
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
+        $user = Auth::user();                                   // ログインユーザー情報を取得
+
+        if (!$user) {                                           // 未ログインならば
+
+            return redirect()->route('login');                  // ログイン画面にリダイレクト
+        }
+
         $currentStatus = $request->query('status');       // 現在の表示ステータスをクエリパラメータから取得
 
         $plans = ReadingPlan::with('user')                      // ステータス指定がある場合は条件付きで、
@@ -61,28 +71,43 @@ class ReadingPlanController extends Controller
      */
     public function store(StoreReadingPlanRequest $request): RedirectResponse
     {
-        $user = Auth::user();                                   // ログインユーザーを取得
+        $validated = $request->validated();
 
-        $bookId = $request->book_id;                            // 入力された書籍IDを取得
+        $user = Auth::user();
 
-        $status = ReadingPlanStatus::Inective;                  // ステータスを未読書とする
+        $checkRecord = ReadingPlan::where('user_id', $user->id)
+            ->where('book_id', $validated['book_id'])
+            ->get();
+
+        if ($checkRecord->isNotEmpty()) {
+
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['book_id' => '同じ本が既に登録されています']);
+
+        }
+
+        $userId = Auth::user()->id;                             // ログインユーザーを取得
+
+        $bookId = $request->book_id;                            // $request内の入力された書籍IDを取得
+
+        $status = ReadingPlanStatus::Inactive;                  // ステータスを未読書とする
 
         $startDate = Carbon::today();                     // 開始日は今日とする（過去日を期日としない前提）
 
         $targetDate = $request->target_date;                    // 期日は$request内の入力日付とする
 
-        $completedAt = null;                                    // 読了日の初期値をnullにする
-
         ReadingPlan::create([                                   // 準備したデータでレコード作成
-            'user_id' => $user->id,
+            'user_id' => $userId,
             'book_id' => $bookId,
             'start_date' => $startDate,
             'target_date' => $targetDate,
             'status' => $status,
-            'completed_at' => $completedAt,
+            'completed_at' => null,
         ]);
 
-        return redirect()->route('reading-plans.index');        // 読書計画一覧画面にリダイレクト
+        return redirect()->route('reading-plans.index')   // メッセージ付きで読書計画一覧画面にリダイレクト
+            ->with('success', '読書計画が登録されました');
     }
 
     /**
@@ -90,6 +115,8 @@ class ReadingPlanController extends Controller
      */
     public function edit(string $id): View
     {
+        $user = Auth::user();                                   // ログインユーザー情報を取得
+
         $readingPlan = ReadingPlan::findOrFail($id);            // 指定された読書計画レコードを取得
 
         $this->authorize('edit', $readingPlan);     // ログインユーザーが読書計画の作成者かpolicyでチェック
@@ -112,7 +139,8 @@ class ReadingPlanController extends Controller
 
         $readingPlan->update($validated);                       // 準備したデータでレコード更新
 
-        return redirect()->route('reading-plans.index');        // 読書計画一覧画面にリダイレクト
+        return redirect()->route('reading-plans.index')   // メッセージ付きで読書計画一覧画面にリダイレクト
+            ->with('success', '読書計画が更新されました');
     }
 
     /**
@@ -126,7 +154,8 @@ class ReadingPlanController extends Controller
 
         $readingPlan->delete();                                 // レコードを削除
 
-        return redirect()->route('reading-plans.index');        // 読書計画一覧画面へリダイレクト
+        return redirect()->route('reading-plans.index')   // メッセージ付きで読書計画一覧画面にリダイレクト
+            ->with('success', '読書計画が削除されました');
     }
 
     /**

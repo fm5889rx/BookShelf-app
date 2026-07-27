@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -61,5 +62,14 @@ class User extends Authenticatable
             'review_id'
         )
             ->withTimestamps();
+    }
+
+    /**
+     * Advanced:
+     * 読書計画とのリレーション
+     */
+    public function readingPlans(): HasMany           // 読書計画ーユーザー間リレーション（多対１）
+    {
+        return $this->hasMany(ReadingPlan::class);
     }
 }

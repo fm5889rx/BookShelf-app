@@ -17,9 +17,9 @@ class ReviewSeeder extends Seeder
 
         for ($bookId = 1; $bookId <= $bookCount; $bookId++) {   // 書籍数回繰り返し
 
-            $reviewCount = random_int(2, 4);                    // 生成レビュー数をランダムに算出
+            $reviewCount = random_int(3, 5);                    // 生成レビュー数をランダムに算出
 
-            for ($j = 1; $j <= $reviewCount; $j++) {            // 書籍順にレビューを生成
+            for ($j = 1; $j < $reviewCount; $j++) {             // 書籍順にレビューを生成
 
                 $review = Review::Create([                      // レコード新規作成
                     'user_id' => random_int(1, 5),              // 1〜5のランダムなユーザーID
