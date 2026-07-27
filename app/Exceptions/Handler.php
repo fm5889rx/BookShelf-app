@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;                  // Advanced:
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpFoundation\Response;                      // Advanced:
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +28,21 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Advanced:
+     * authorize()で403エラーが出た時の例外ハンドラ
+     */
+    public function render($request, Throwable $exception)
+    {
+        // 403 が発生したら「一覧画面に戻る + メッセージ」
+        if ($exception instanceof AuthorizationException) {
+            return redirect()
+                ->to(url()->previous())          // 前のページへ戻る
+                ->with('error', '編集権限がありません'); // ここで flash する
+        }
+
+        return parent::render($request, $exception);
     }
 }

@@ -48,8 +48,7 @@ class ReadingPlanSeeder extends Seeder
                                                                         // ランダムに過去の日付をセット
                         'target_date'=> Carbon::today()->addDays(rand(5, 10)), // Seeder実行日から
                                                                         // ランダムに未来の日付をセット
-
-                        'status' => ReadingPlanStatus::INACTIVE, // ステータス初期値は未読書とする
+                        'status' => ReadingPlanStatus::Inactive, // ステータス初期値は未読書とする
                     ],
                 );
             } catch (PDOException $e) {                     // SQL-exeption発生
@@ -64,35 +63,35 @@ class ReadingPlanSeeder extends Seeder
             switch ($created) {                             // 生成件数によってステータスの綾井を変える
 
                 case 0:                                     // レコード1
-                    $plan->status = ReadingPlanStatus::NOPLAN; // ステータスを未計画に書き換える
+                    $plan->status = ReadingPlanStatus::NoPlan; // ステータスを未計画に書き換える
 
                     $plan->save();                          // レコードに保存
 
                     break;                                  // 次の処理へ
 
                 case 1:                                     // レコード2
-                    $plan->status = ReadingPlanStatus::INACTIVE; // ステータスを未読書に書き換える
+                    $plan->status = ReadingPlanStatus::Inactive; // ステータスを未読書に書き換える
 
                     $plan->save();                          // レコードに保存
 
                     break;                                  // 次の処理へ
 
                 case 2:                                     // レコード3
-                    $plan->status = ReadingPlanStatus::ACTIVE; // ステータスを読書中に書き換える
+                    $plan->status = ReadingPlanStatus::Active; // ステータスを読書中に書き換える
 
                     $plan->save();                          // レコードに保存
 
                     break;                                  // 次の処理へ
 
                 case 3:                                     // レコード4
-                    $plan->status = ReadingPlanStatus::COMPLETE; // ステータスを読了に書き換える
+                    $plan->status = ReadingPlanStatus::Completed; // ステータスを読了に書き換える
 
                     $plan->save();                          // レコードに保存
 
                     break;                                  // 次の処理へ
 
                 case 4:                                     // レコード5
-                    $plan->status = ReadingPlanStatus::PAUSE; // ステータスを一時中断に書き換える
+                    $plan->status = ReadingPlanStatus::Pause; // ステータスを一時中断に書き換える
 
                     $plan->save();                          // レコードに保存
 

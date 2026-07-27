@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Genre extends Model
 {
@@ -23,5 +24,11 @@ class Genre extends Model
     public function books(): BelongsToMany          // ジャンルー書籍情報間リレーション（多対多）
     {
         return $this->belongsToMany(Book::class);
+    }
+
+    // Advanced;
+    public function reviews(): HasManyThrough       // ジャンルー書籍情報ーレビュー間リレーション
+    {
+        return $this->hasManyThrough(review::class, Book::class);
     }
 }

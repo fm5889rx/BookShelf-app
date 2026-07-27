@@ -9,6 +9,7 @@ use App\Models\Genre;
 use Illuminate\Http\Request;                                    // Advanced;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;                            // Advanced:
+use Illuminate\Support\Facades\Session;
 
 /**
  * 書籍関連のコントローラ
@@ -25,11 +26,44 @@ class BookController extends Controller
          * Advanced:
          * 検索処理追加
          */
-        $keyword = $request->query('keyword');                  // クエリパラメータからキーワードを分離
+        // クエリパラメータまたはセッションからキーワードを取得
+        if ($request->has('keyword')) {                         // クエリパラメータに'keyword'がある？
 
-        $genre = intval($request->query('genre'));              // クエリパラメータからジャンルIDを分離
+            $keyword = $request->query('keyword');              // クエリパラメータからキーワードを取得
 
-        $sortMethod = $request->query('sort');                  // クエリパラメータからソート方式を分離
+            Session::put('keyword', $keyword);                  // 取得したキーワードをセッションに保存
+
+        } else {                                                // 'keyword'キーがない場合
+
+            $keyword = Session::get('keyword');                 // セッションからキーワードを取り出す
+
+        }
+
+        // クエリパラメータまたはセッションからジャンルIDを取得
+        if ($request->has('genre')) {                           // クエリパラメータに'genre'がある？
+
+            $genreId = $request->query('genre');                // クエリパラメータからジャンルIDを取得
+
+            Session::put('genre', $genreId);                    // 取得したジャンルIDをセッションに保存
+
+        } else {                                                // 'genre'キーがない場合
+
+            $genreId = Session::get('genre');                   // セッションからジャンルIDを取り出す
+
+        }
+
+        // クエリパラメータまたはセッションからソート方式を取得
+        if ($request->has('sort')) {                            // クエリパラメータに'sort'がある？
+
+            $sortMethod = $request->query('sort');              // クエリパラメータからソート方式を取得
+
+            Session::put('sort', $sortMethod);                  // 取得したソート方式をセッションに保存
+
+        } else {                                                // 'sort'キーがない場合
+
+            $sortMethod = Session::get('sort');                 // セッションからソート方式を取り出す
+
+        }
 
         $query = Book::query();                                 // bookモデルのクエリビルダを取得
 
@@ -39,12 +73,11 @@ class BookController extends Controller
                 ->orWhere('author', 'like', '%'.$keyword.'%');  // クエリビルダに著者の部分一致検索条件を追加
         }
 
-        if (!empty($genre)) {                                   // ジャンル指定あり？
+        if (!empty($genreId)) {                                 // ジャンル指定あり？
 
-            $query->whereHas('genres', function ($q) use ($genre) { // ピボットテーブルから指定ジャンルに
-                $q->where('genres.id', $genre);                 // 一致する書籍をクエリビルダに追加
+            $query->whereHas('genres', fn ($q) =>               // ピボットテーブルから指定ジャンルに
+                $q->where('genres.id', $genreId));               // 一致する書籍をクエリビルダに追加
 
-            });
         }
 
         switch ($sortMethod) {                                  // 並び順により選択
@@ -69,8 +102,8 @@ class BookController extends Controller
 
                 break;                                          // この処理終わり
 
-            default:                                            // 上記以外（バグ回避）
-                break;                                          // 何もしない
+            default:                                            // 上記以外
+                break;                                          // この処理終わり
         }
 
         $books = $query->paginate(10);                          // 検索結果を10件／ページで取得する
@@ -186,11 +219,14 @@ class BookController extends Controller
     {
         $isbn = $request->query('isbn');                        // クエリパラメータからISBNコードを取得
 
+        $apiKey = 'YOUR_API_KEY_HERE';
+
+dump($isbn);
         // Google Books API へのリクエスト
         $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
-            'q' => 'isbn:' . $isbn,   // ISBN で検索
+            'q' => 'isbn:' . $isbn . '&key' . $apiKey,  // ISBN で検索
         ]);
-dd($response);
+dump($response);
         if (! $response->ok()) {                            // HTTP ステータス 200 でなければエラーにする
 
             return response()->json([                       // エラーメッセージを返す
@@ -201,7 +237,7 @@ dd($response);
 
             ], 502);                                        // 502 Bad Gateway を返す
         }
-dd($response->json());
+dump($response->json());
         return response()->json($response->json());
     }
 }
