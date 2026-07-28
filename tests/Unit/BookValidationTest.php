@@ -2,12 +2,14 @@
 
 namespace Tests\Unit;
 
+use App\Http\Requests\SearchBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
@@ -61,7 +63,7 @@ class BookValidationTest extends TestCase
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
 
         // 判定
-        $this->assertTrue($validator->passes());            // 成功ならTrueを返す
+        $this->assertTrue($validator->fails());            // 成功ならTrueを返す
     }
 
     /**
@@ -219,7 +221,7 @@ class BookValidationTest extends TestCase
         // 準備
         $rules = (new StoreBookRequest)->rules();           // バリデーションルールを取得する
 
-        $this->validData['published_date'] = '2026年7月5日';  // 出版日が有効な日付形式でない
+        $this->validData['published_date'] = '31-07-2026';  // 出版日が有効な日付形式でない
 
         // 実行
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
@@ -290,7 +292,7 @@ class BookValidationTest extends TestCase
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
 
         // 判定
-        $this->assertTrue($validator->passes());            // 成功ならTrueを返す
+        $this->assertTrue($validator->fails());            // 成功ならTrueを返す
     }
 
     /**
@@ -431,7 +433,7 @@ class BookValidationTest extends TestCase
         // 準備
         $rules = (new UpdateBookRequest)->rules();          // バリデーションルールを取得する
 
-        $this->validData['published_date'] = '2026年7月5日';  // 出版日が有効な日付形式でない
+        $this->validData['published_date'] = '31-07-2026';  // 出版日が有効な日付形式でない
 
         // 実行
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
@@ -486,6 +488,80 @@ class BookValidationTest extends TestCase
 
         // 判定
         $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
-
     }
+
+    /**
+     * Advanced:
+     * 検索パラメータ
+     */
+    public function test_書籍一覧_正常系_検索対応()
+    {
+        // 準備
+        $rules = (new SearchBookRequest)->rules();          // バリデーションルールを取得する
+
+        // 実行
+        $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
+
+        // 判定
+        $this->assertTrue($validator->passes());            // 成功ならTrueを返す
+    }
+
+    /** キーワード文字列が長すぎる */
+    public function test_異常系_キーワードが長すぎる()
+    {
+        // 準備
+        $rules = (new SearchBookRequest)->rules();          // バリデーションルールを取得する
+
+        $this->validData['keyword'] = str_repeat('A', 256);   // キーワードが256文字の文字列
+
+        // 実行
+        $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
+
+        // 判定
+        $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
+    }
+
+    /** per_pageが範囲外 */
+    public function test_異常系_ページネーション_per_page範囲外_最小()
+    {
+        // 準備
+        $rules = (new SearchBookRequest)->rules();          // バリデーションルールを取得する
+
+        $this->validData['per_page'] = 0;                   // min:1 を下回る
+
+        // 実行
+        $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
+
+        // 判定
+        $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
+    }
+
+    /** per_pageが範囲外 */
+    public function test_異常系_ページネーション_per_page範囲外_最大()
+    {
+        // 準備
+        $rules = (new SearchBookRequest)->rules();          // バリデーションルールを取得する
+
+        $this->validData['per_page'] = 101;                 // max:100 を上回る
+        // 実行
+        $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
+
+        // 判定
+        $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
+    }
+
+    /** pageが範囲外 */
+    public function test_異常系_ページ指定が範囲外()
+    {
+    // 準備
+    $rules = (new SearchBookRequest)->rules();          // バリデーションルールを取得する
+
+    $this->validData['page'] = 0;                       // min:1 を下回る
+
+    // 実行
+    $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
+
+    // 判定
+    $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
+}
 }

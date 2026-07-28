@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
@@ -25,13 +26,17 @@ class ReviewValidationTest extends TestCase
     public function test_レビュー新規作成_バリデーションチェック_正常系()
     {
         // 準備
+        $user = User::factory()->create();                  // テスト用にユーザを作成
+
+        $this->actingAs($user);                             // ログイン状態にする
+
         $this->validData = Review::factory()->make();       // テスト用のレビューレコードを1件生成
 
         $rules = (new StoreReviewRequest)->rules();         // バリデーションルールを取得する
-
+//dump($this->validData);
         // 実行
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
-
+//dd($validator->errors()->all(), $validator->passes());
         // 判定
         $this->assertTrue($validator->passes());            // 成功ならTrueを返す
     }
@@ -130,9 +135,9 @@ class ReviewValidationTest extends TestCase
         $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
     }
 
-    /**-------------------------------------------------------------------------------------------------
+    /**-----------------------------------------------------
      * レビュー更新（update）バリデーションチェック
-     *------------------------------------------------------------------------------------------------*/
+     *----------------------------------------------------*/
     /** 正常値を渡す **/
     public function test_レビュー更新_バリデーションチェック_正常系()
     {

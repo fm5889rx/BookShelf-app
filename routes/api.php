@@ -1,7 +1,11 @@
 <?php
 
+/**
+ * Advanced:
+ * Sanctum対応
+ */
 use App\Http\Controllers\api\v1\ApiBookController;
-use Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,12 +18,11 @@ use Illuminate\Http\Request;
 */
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
+Route::post('/v1/login', [ApiBookController::class, 'login']);                  // Advanced:
 Route::get('/v1/books', [ApiBookController::class, 'index']);
 Route::get('/v1/books/{book}', [ApiBookController::class, 'show']);
-Route::post('/v1/books', [ApiBookController::class, 'store']);
-Route::put('/v1/books/{book}', [ApiBookController::class, 'update']);
-Route::delete('/v1/books/{book}', [ApiBookController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {                          // Advanced:
+    Route::post('/v1/books', [ApiBookController::class, 'store']);
+    Route::put('/v1/books/{book}', [ApiBookController::class, 'update']);
+    Route::delete('/v1/books/{book}', [ApiBookController::class, 'destroy']);
+});

@@ -17,9 +17,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
-use Illuminate\Validation\Rule;
-
-
 class ReadingPlanController extends Controller
 {
     protected $currentStatus;

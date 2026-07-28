@@ -6,9 +6,7 @@ namespace App\Http\Controllers;
  * Advanced:
  * マイ読書レポート
  */
-
 use App\Enums\ReadingPlanStatus;
-use App\Models\Book;
 use App\Models\Genre;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;

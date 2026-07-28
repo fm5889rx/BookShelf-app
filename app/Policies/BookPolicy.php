@@ -15,15 +15,15 @@ class BookPolicy
         //
     }
 
-    public function edit(User $user, Book $book): bool
+    public function create(User $user): bool
     {
-        // 登録者のみ編集を許可
-        return $user->id === $book->user_id;
+        // 登録者のみ新規作成を許可
+        return $user->id;
     }
 
     public function update(User $user, Book $book): bool
     {
-        // 登録者のみ編集を許可
+        // 登録者のみ更新を許可
         return $user->id === $book->user_id;
     }
 

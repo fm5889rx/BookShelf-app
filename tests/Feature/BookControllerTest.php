@@ -73,9 +73,7 @@ class BookControllerTest extends TestCase
         // 検証
         $response->assertStatus(302);                           // ステータス302を期待
 
-        $response->assertRedirect(route('login'));              // 書籍登録画面が表示されることを確認
-
-        $response->assertViewHas('genres');                    // ビューにジャンルデータが渡っているか確認
+        $response->assertRedirect(route('login'));              // ログイン画面が表示されることを確認
     }
 
     public function test_ユーザーは書籍情報を新規登録できる()
@@ -183,15 +181,9 @@ class BookControllerTest extends TestCase
         $response = $this->get(route('books.edit', $book->id)); // 未ログインのまま書籍編集画面を表示
 
         // 検証
-        $response->assertStatus(200);                           // HTTPステータスが200を期待
+        $response->assertStatus(302);                           // HTTPステータスが302を期待
 
-        $response->assertViewIs('books.edit');                  // 書籍編集画面が表示されていることを確認
-
-        $response->assertViewHas('book');                       // 書籍編集にデータが渡っていることを確認
-
-        $books = $response->viewData('book');                   // 編集画面ビューに渡っているデータを取得
-
-        $this->assertNotEmpty($books);                          // データが空でないことを確認
+        $response->assertRedirect(route('login'));              // ログイン画面が表示されていることを確認
     }
 
     public function test_ユーザーは書籍情報を更新できる()

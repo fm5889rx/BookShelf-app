@@ -22,9 +22,10 @@ class ReadingPlanFactory extends Factory
         return [
             'user_id' => User::factory(),
             'book_id' => Book::factory(),
-            'start_date' => Carbon::today()->format('Y-m-d'),
-            'target_date' => Carbon::today()->addDays(5)->format('Y-m-d'),
-            'status' => ReadingPlanStatus::INACTIVE,
+            'start_date' => Carbon::today()->subDays(2)->toDateString(),
+            'target_date' => Carbon::today()->addDays(3)->toDateString(),
+            'status' => ReadingPlanStatus::Inactive->value,
+            'completed_at' => null,
         ];
     }
 
@@ -34,7 +35,7 @@ class ReadingPlanFactory extends Factory
     public function reading(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => ReadingPlanStatus::ACTIVE,
+            'status' => ReadingPlanStatus::Active,
         ]);
     }
 }

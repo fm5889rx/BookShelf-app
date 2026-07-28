@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /**
+     * Advanced:
+     * Google Books APIのサービスを登録
+     */
+    'google' => [
+        'books_api_key' => env('GOOGLE_BOOKS_API_KEY'),
+    ],
 ];

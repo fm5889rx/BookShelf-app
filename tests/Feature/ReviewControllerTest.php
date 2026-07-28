@@ -18,7 +18,7 @@ class ReviewControllerTest extends TestCase
     use MakesHttpRequests;
     use RefreshDatabase;
 
-    public function test_ユーザーはレビュー編集画面を表示できる()
+    public function test_ユーザーはレビュー編集画面を表示できる(): void
     {
         // 準備
         $user = User::factory()->create();                      // テスト用にユーザーを1件生成
@@ -42,7 +42,7 @@ class ReviewControllerTest extends TestCase
         $response->assertViewIs('reviews.edit');                // レビュー編集画面が表示されていることを確認
     }
 
-    public function test_ユーザーはレビューを新規作成できる()
+    public function test_ユーザーはレビューを新規作成できる(): void
     {
         // 準備
         $user = User::factory()->create();                      // テスト用にユーザーを1件生成
@@ -72,12 +72,16 @@ class ReviewControllerTest extends TestCase
         ]);
     }
 
-    public function test_ユーザーはレビューを更新できる()
+    public function test_ユーザーはレビューを更新できる(): void
     {
         // 準備
         $user = User::factory()->create();                      // テスト用にユーザーを1件生成
 
-        $book = Book::factory()->create(['user_id' => $user->id]);  // テスト用にuser_idを登録した書籍情報を生成
+        $this->actingAs($user);                                 // ログイン状態にする
+
+        $book = Book::factory()->create([                   // テスト用にuser_idを登録した書籍情報を生成
+            'user_id' => $user->id,
+        ]);
 
         $review = Review::factory()->create([                   // テスト用にuser_idとbook_idを登録したレビュー
             'book_id' => $book->id,
@@ -93,6 +97,8 @@ class ReviewControllerTest extends TestCase
             ]);
 
         // 検証
+        $response->assertStatus(200);                           // HTTPステータス 302 を期待
+
         $response->assertViewIs('books.show');                  // 書籍詳細画面を表示していることを確認
 
         $this->assertDatabaseHas('reviews', [                   // データベースが更新されていることを確認
@@ -103,7 +109,7 @@ class ReviewControllerTest extends TestCase
         ]);
     }
 
-    public function test_ユーザーはレビューを削除できる()
+    public function test_ユーザーはレビューを削除できる(): void
     {
         // 準備
         $user = User::factory()->create();                      // テスト用にユーザーを1件生成
