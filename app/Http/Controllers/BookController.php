@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SearchBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Models\Genre;
-use Illuminate\Http\Request;                                    // Advanced;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;                            // Advanced:
 use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 /**
  * 書籍関連のコントローラ
@@ -20,12 +23,14 @@ use Illuminate\Support\Facades\Session;
  */
 class BookController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * 書籍一覧画面を表示
+     *
+     * Advanced:
+     * 検索処理追加
+     */
+    public function index(SearchBookRequest $request): View
     {
-        /**
-         * Advanced:
-         * 検索処理追加
-         */
         // クエリパラメータまたはセッションからキーワードを取得
         if ($request->has('keyword')) {                         // クエリパラメータに'keyword'がある？
 
@@ -130,11 +135,13 @@ class BookController extends Controller
     /**
      * 書籍登録処理
      */
-    public function store(StoreBookRequest $request)
+    public function store(StoreBookRequest $request): RedirectResponse
     {
         $validated = $request->validated();                     // 入力データのバリデーション結果を保存
 
         $userId = auth()->id();                                 // ログインユーザーIDを取得
+
+        $this->authorize('create', Book::class);          // ログインユーザーが存在するかpolicyでチェック
 
         if (! $userId) {                                        // ログインユーザがあるかチェック
             return redirect()->route('login');              // 未ログインならばログイン画面へリダイレクト
@@ -158,7 +165,7 @@ class BookController extends Controller
     /**
      * 書籍詳細画面を表示
      */
-    public function show(string $id)
+    public function show(string $id): View
     {
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
@@ -168,11 +175,9 @@ class BookController extends Controller
     /**
      * 書籍編集画面を表示
      */
-    public function edit(string $id)
+    public function edit(string $id): View
     {
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
-
-        $this->authorize('edit', $book);            // ログインユーザーが書籍情報の作成者かpolicyでチェック
 
         $genres = Genre::all();                                 // 登録ジャンルを全て取得
 
@@ -182,7 +187,7 @@ class BookController extends Controller
     /**
      * 書籍情報更新
      */
-    public function update(UpdateBookRequest $request, string $id)
+    public function update(UpdateBookRequest $request, string $id): RedirectResponse
     {
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
@@ -200,7 +205,7 @@ class BookController extends Controller
     /**
      * 書籍情報削除
      */
-    public function destroy(string $id)
+    public function destroy(string $id): RedirectResponse
     {
         $book = Book::findOrFail($id);                          // 指定IDの書籍情報を取得
 
@@ -215,29 +220,46 @@ class BookController extends Controller
      * Advanced:
      * Google Book APIを使って書籍情報を取得
      */
-    public function searchByIsbn(Request $request)
+    public function searchByIsbn(string $isbn): JsonResponse
     {
-        $isbn = $request->query('isbn');                        // クエリパラメータからISBNコードを取得
+        $apiKey = config('services.google.books_api_key');  // Google Books API のキーを.envから取得
 
-        $apiKey = 'YOUR_API_KEY_HERE';
+        $url = 'https://www.googleapis.com/books/v1/volumes'; // APIのURLをセット
 
-dump($isbn);
+        $fullUrl = $url . '?q=isbn:' . $isbn . '?key=' . $apiKey;
+//dd($fullUrl);
         // Google Books API へのリクエスト
-        $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
-            'q' => 'isbn:' . $isbn . '&key' . $apiKey,  // ISBN で検索
-        ]);
-dump($response);
-        if (! $response->ok()) {                            // HTTP ステータス 200 でなければエラーにする
+        $apiResponse = Http::retry(1, 1000)->get($fullUrl); // 1秒のリトライを入れてBooks APIをコール
+//dd($apiResponse);
+        if (! $apiResponse->ok()) {                         // HTTP ステータス 200 でなければエラーにする
 
-            return response()->json([                       // エラーメッセージを返す
+            return response()->json([                       // JSON形式でエラー情報を返す
 
-                'error' => 'Google Books API への問い合わせに失敗しました',
+                'error' => 'Google Books API への問い合わせに失敗しました', //エラーメッセージ
 
-                'code'  => $response->status(),
+                'code'  => $apiResponse->status(),          // Google APIからのエラーコード
 
-            ], 502);                                        // 502 Bad Gateway を返す
+            ], $apiResponse->status());                     // Google APIからのエラーコードを返す
         }
-dump($response->json());
-        return response()->json($response->json());
+
+        // APIレスポンスからbladeに渡せるようにレスポンスを整形
+        $data = $apiResponse->json();                       // APIレスポンスをJSON形式に変換（念のため）
+        if (isset($data['items'][0]['volumeInfo]'])) {
+            $response = $data['items'][0]['volumeInfo]'];
+        } else {
+            $response = null;
+
+            return response()->json([                       // JSON形式でエラー情報を返す
+
+                'error' => '書籍検索に失敗しました',            //エラーメッセージ
+
+                'code'  => $apiResponse->status(),          // Google APIからのエラーコードをセット
+
+            ], 404);                                        // 404 Not Found エラーコードを返す
+
+        }
+
+//$dd($response);
+        return response()->json($response);                 // 整形したデータを返す
     }
 }

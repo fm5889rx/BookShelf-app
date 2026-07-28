@@ -42,8 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
-    Route::get('books/isbn/{isbn}', [BookController::class, 'searchByIsbn']); // Advanced:ISBN検索
+//      Route::get('books/isbn/{isbn}', [BookController::class, 'searchByIsbn']); // Advanced:ISBN検索
 });
+Route::get('books/isbn/{isbn}', [BookController::class, 'searchByIsbn']); // Advanced:ISBN検索
 
 // レビューのルーティング
 Route::middleware('auth')->group(function () {
@@ -77,16 +78,21 @@ Route::get('/ranking', [FavoriteController::class, 'ranking'])->name('ranking.in
  * 応用機能のルーティング
  */
 // 読書計画
-Route::get('reading-plans', [ReadingPlanController::class, 'index'])->name('reading-plans.index');
-Route::get('/reading^plans/create', [ReadingPlanController::class, 'create'])->name('reading-plans.create');
-Route::get('/reading-plans/{plan}/edit', [ReadingPlanController::class, 'edit'])->name('reading-plans.edit');
-Route::post('/reading-plans', [ReadingPlanController::class, 'store'])->name('reading-plans.store');
-Route::put('/reading-plans/{plan}', [ReadingPlanController::class, 'update'])->name('reading-plans.update');
-Route::delete('/reading-plans/{plan}', [ReadingPlanController::class, 'destroy'])->name('reading-plans.destroy');
-Route::post('/reading-plans/{plan}/complete', [ReadingPlanController::class, 'complete'])->name('reading-plans.complete');
+Route::middleware('auth')->group(function () {
+    Route::get('reading-plans', [ReadingPlanController::class, 'index'])->name('reading-plans.index');
+    Route::get('/reading^plans/create', [ReadingPlanController::class, 'create'])->name('reading-plans.create');
+    Route::get('/reading-plans/{plan}/edit', [ReadingPlanController::class, 'edit'])->name('reading-plans.edit');
+    Route::post('/reading-plans', [ReadingPlanController::class, 'store'])->name('reading-plans.store');
+    Route::put('/reading-plans/{plan}', [ReadingPlanController::class, 'update'])->name('reading-plans.update');
+    Route::delete('/reading-plans/{plan}', [ReadingPlanController::class, 'destroy'])->name('reading-plans.destroy');
+    Route::post('/reading-plans/{plan}/complete', [ReadingPlanController::class, 'complete'])->name('reading-plans.complete');
+});
 
 // マイ読書レポート
-Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+Route::middleware('auth')->group(function () {
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+});
 
 // 通知
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');

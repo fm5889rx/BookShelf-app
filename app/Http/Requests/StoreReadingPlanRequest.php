@@ -26,7 +26,7 @@ class StoreReadingPlanRequest extends FormRequest
         $rules = [
             'book_id' => 'required|integer|exists:books,id',
             'target_date' => 'required|date|date_format:Y-m-d',
-         ];
+        ];
 
         return $rules;
     }

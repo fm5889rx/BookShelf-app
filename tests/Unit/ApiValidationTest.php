@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ApiValidationTest extends TestCase
@@ -29,22 +30,26 @@ class ApiValidationTest extends TestCase
         // テスト用のジャンルテーブルを作成
         $this->genre = Genre::factory()->create();      // テスト用のジャンルを登録
 
+        // テスト用の書籍テーブルを作成
         $this->book = Book::factory()->create([         // テスト用の書籍情報を1件登録
             'user_id' => $this->user->id,               // 存在するユーザーIDを使用
         ]);
+
+        // Advanced:
+        Sanctum::actingAs($this->user);                 // Sanctumログインを行う
     }
 
     /**----------------------------------------------------------------------------------------
-     * GET系テスト
+     * Advanced:
+     * GET系テスト（検索対応）
      *---------------------------------------------------------------------------------------*/
     /** 正常終了 **/
-    public function test_api_正常系パラメータ_検索対応()
+    public function test_api_正常系パラメータ_検索対応(): void
     {
         // API に対して有効なクエリパラメータを送信
         $response = $this->getJson('/api/v1/books', [
             'keyword' => '',                            // 検索対象では無い
             'genre_id' => 1,                            // このIDがgenresテーブルに存在することを想定
-            'per_page' => 10,                           // 1ページあたりの一覧数は10件
             'page' => 1,                                // 1ページ目を取得
         ]);
 
@@ -58,7 +63,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** キーワード文字列が長すぎる */
-    public function test_api_異常系_キーワードが長すぎる()
+    public function test_api_異常系_キーワードが長すぎる(): void
     {
         // 長すぎるキーワード文字列を送信してバリデーションエラーを確認
         $response = $this->json('GET', 'api/v1/books', [
@@ -71,7 +76,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 存在しないジャンルID */
-    public function test_api_異常系_ジャンル_i_dが存在しない()
+    public function test_api_異常系_ジャンル_idが存在しない(): void
     {
         // 存在しない genre_id を送信してバリデーションエラーを確認
         $response = $this->json('GET', '/api/v1/books', [
@@ -84,7 +89,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** per_pageが範囲外 */
-    public function test_api_異常系_ページネーション_per_page範囲外_最小()
+    public function test_api_異常系_ページネーション_per_page範囲外_最小(): void
     {
         // per_page は min:1 なので、0を送信してバリデーションエラーを確認
         $response = $this->json('GET', '/api/v1/books', [
@@ -97,7 +102,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** per_pageが範囲外 */
-    public function test_api_異常系_ページネーション_per_page範囲外_最大()
+    public function test_api_異常系_ページネーション_per_page範囲外_最大(): void
     {
         // per_page は max:100 なので、101を送信してバリデーションエラーを確認
         $response = $this->json('GET', '/api/v1/books', [
@@ -110,7 +115,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** pageが範囲外 */
-    public function test_api_異常系_ページ指定が範囲外()
+    public function test_api_異常系_ページ指定が範囲外(): void
     {
         // page は min:1 なので、0を送信してバリデーションエラーを確認
         $response = $this->json('GET', '/api/v1/books', [
@@ -126,7 +131,7 @@ class ApiValidationTest extends TestCase
      * POST系テスト
      *---------------------------------------------------------------------------------------*/
     /** 正常終了 **/
-    public function test_api_正常系_postで成功を返す()
+    public function test_api_正常系_postで成功を返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -150,7 +155,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** タイトルが空文字列 **/
-    public function test_api_異常系_postで空のtitleのバリデーションエラーを返す()
+    public function test_api_異常系_postで空のtitleのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => '',                              // タイトルが空文字列
@@ -168,7 +173,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 長すぎるタイトル文字列 **/
-    public function test_api_異常系_postで長すぎるtitleのバリデーションエラーを返す()
+    public function test_api_異常系_postで長すぎるtitleのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => str_repeat('A', 256),            // max:255なので256文字の文字列
@@ -186,7 +191,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 著者が空文字列 **/
-    public function test_api_異常系_postで空のauthorのバリデーションエラーを返す()
+    public function test_api_異常系_postで空のauthorのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -204,7 +209,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 長すぎる著者文字列 **/
-    public function test_api_異常系_postで長すぎるautherのバリデーションエラーを返す()
+    public function test_api_異常系_postで長すぎるautherのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -222,7 +227,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ISBNコードが空文字列 **/
-    public function test_api_異常系_postで空のisbnのバリデーションエラーを返す()
+    public function test_api_異常系_postで空のisbnのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -240,7 +245,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ISBNコードが12桁 **/
-    public function test_api_異常系_postで短いisbnのバリデーションエラーを返す()
+    public function test_api_異常系_postで短いisbnのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -258,7 +263,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ISBNコードが14桁 **/
-    public function test_api_異常系_postで長いisbnのバリデーションエラーを返す()
+    public function test_api_異常系_postで長いisbnのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -276,7 +281,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 同じISBNコード **/
-    public function test_api_異常系_postで同じisbnのバリデーションエラーを返す()
+    public function test_api_異常系_postで同じisbnのバリデーションエラーを返す(): void
     {
         $response = $this->actingAs($this->user)->
                  // すでに登録しているbooksレコードを取得
@@ -302,7 +307,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 出版日が空文字列 **/
-    public function test_api_異常系_postで空のpublished_dateのバリデーションエラーを返す()
+    public function test_api_異常系_postで空のpublished_dateのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -320,7 +325,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 発行日が日付形式でない文字列 ＊*/
-    public function test_api_異常系_postで不正な日付のバリデーションエラーを返す()
+    public function test_api_異常系_postで不正な日付のバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -338,7 +343,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 発行日が認識できない日付形式 */
-    public function test_api_異常系_postで認識できない日付形式のバリデーションエラーを返す()
+    public function test_api_異常系_postで認識できない日付形式のバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -358,7 +363,7 @@ class ApiValidationTest extends TestCase
     /** 長すぎる説明文
      * ※descriptionはnullable
      */
-    public function test_api_異常系_postで長すぎる説明文のバリデーションエラーを返す()
+    public function test_api_異常系_postで長すぎる説明文のバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -378,7 +383,7 @@ class ApiValidationTest extends TestCase
     /** 不正なURL
      * ※image_urlはnullable
      */
-    public function test_api_異常系_postで不正なurlのバリデーションエラーを返す()
+    public function test_api_異常系_postで不正なurlのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -396,7 +401,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ジャンルIDが空 **/
-    public function test_api_異常系_postで空のgenresのバリデーションエラーを返す()
+    public function test_api_異常系_postで空のgenresのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -414,7 +419,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 存在しないジャンルID **/
-    public function test_api_異常系_postで存在しないgenresのバリデーションエラーを返す()
+    public function test_api_異常系_postで存在しないgenresのバリデーションエラーを返す(): void
     {
         $response = $this->json('POST', '/api/v1/books', [  // 書籍登録機能を呼び出す
             'title' => 'テストタイトル',
@@ -435,7 +440,7 @@ class ApiValidationTest extends TestCase
      * PUT系テスト
      *---------------------------------------------------------------------------------------*/
     /** 正常終了 **/
-    public function test_api_正常系_putで成功を返す()
+    public function test_api_正常系_putで成功を返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -461,7 +466,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** タイトルが空文字列 **/
-    public function test_api_異常系_putで空のtitleのバリデーションエラーを返す()
+    public function test_api_異常系_putで空のtitleのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -481,7 +486,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 長すぎるタイトル文字列 **/
-    public function test_api_異常系_putで長すぎるtitleのバリデーションエラーを返す()
+    public function test_api_異常系_putで長すぎるtitleのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -501,7 +506,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 著者が空文字列 **/
-    public function test_api_異常系_putで空のauthorのバリデーションエラーを返す()
+    public function test_api_異常系_putで空のauthorのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -521,7 +526,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 長すぎる著者文字列 **/
-    public function test_api_異常系_putで長すぎるautherのバリデーションエラーを返す()
+    public function test_api_異常系_putで長すぎるautherのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -541,7 +546,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ISBNコードが空文字列 **/
-    public function test_api_異常系_putで空のisbnのバリデーションエラーを返す()
+    public function test_api_異常系_putで空のisbnのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -561,7 +566,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ISBNコードが12桁 **/
-    public function test_api_異常系_putで短いisbnのバリデーションエラーを返す()
+    public function test_api_異常系_putで短いisbnのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -581,7 +586,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ISBNコードが14桁 **/
-    public function test_api_異常系_putで長いisbnのバリデーションエラーを返す()
+    public function test_api_異常系_putで長いisbnのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -601,7 +606,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 出版日が空文字列 **/
-    public function test_api_異常系_putで空のpublished_dateのバリデーションエラーを返す()
+    public function test_api_異常系_putで空のpublished_dateのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -621,7 +626,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 発行日が日付形式でない文字列 ＊*/
-    public function test_api_異常系_putで不正な日付のバリデーションエラーを返す()
+    public function test_api_異常系_putで不正な日付のバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -641,7 +646,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 発行日が認識できない日付形式 */
-    public function test_api_異常系_putで認識できない日付形式のバリデーションエラーを返す()
+    public function test_api_異常系_putで認識できない日付形式のバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -663,7 +668,7 @@ class ApiValidationTest extends TestCase
     /** 長すぎる説明文
      * ※descriptionはnullable
      */
-    public function test_api_異常系_putで長すぎる説明文のバリデーションエラーを返す()
+    public function test_api_異常系_putで長すぎる説明文のバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -685,7 +690,7 @@ class ApiValidationTest extends TestCase
     /** 不正なURL
      * ※image_urlはnullable
      */
-    public function test_api_異常系_putで不正な_ur_lのバリデーションエラーを返す()
+    public function test_api_異常系_putで不正な_ur_lのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -705,7 +710,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** ジャンルIDが空 **/
-    public function test_api_異常系_putで空のgenresのバリデーションエラーを返す()
+    public function test_api_異常系_putで空のgenresのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
@@ -725,7 +730,7 @@ class ApiValidationTest extends TestCase
     }
 
     /** 存在しないジャンルID **/
-    public function test_api_異常系_putで存在しないgenresのバリデーションエラーを返す()
+    public function test_api_異常系_putで存在しないgenresのバリデーションエラーを返す(): void
     {
         $bookId = $this->book->id;                          // 登録済みの書籍IDを取得
 
