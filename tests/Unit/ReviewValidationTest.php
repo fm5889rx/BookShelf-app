@@ -33,10 +33,10 @@ class ReviewValidationTest extends TestCase
         $this->validData = Review::factory()->make();       // テスト用のレビューレコードを1件生成
 
         $rules = (new StoreReviewRequest)->rules();         // バリデーションルールを取得する
-//dump($this->validData);
+
         // 実行
         $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
-//dd($validator->errors()->all(), $validator->passes());
+
         // 判定
         $this->assertTrue($validator->passes());            // 成功ならTrueを返す
     }

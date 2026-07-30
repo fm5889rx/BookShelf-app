@@ -14,9 +14,11 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->time('timing');
-            $table->string('title', 255);
-            $table->string('body', 255);
+            $table->foreignId('reading_plan_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('timing', 50)->nullable();
+            $table->string('title', 255)->nullable();
+            $table->string('body', 255)->nullable();
+            $table->json('data')->nullable();
             $table->unsignedBigInteger('notifiable_id');
             $table->string('notifiable_type');
             $table->timestamp('read_at')->nullable();

@@ -12,7 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('app:update-reading-plan')       // Advanced: バッチ処理のスケジュール追加
+            ->dailyAt('20:00');
     }
 
     /**

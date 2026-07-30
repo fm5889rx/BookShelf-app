@@ -226,11 +226,11 @@ class BookController extends Controller
 
         $url = 'https://www.googleapis.com/books/v1/volumes'; // APIのURLをセット
 
-        $fullUrl = $url . '?q=isbn:' . $isbn . '?key=' . $apiKey;
-//dd($fullUrl);
+        $fullUrl = $url . '?q=isbn:' . $isbn . '&key=' . $apiKey;
+
         // Google Books API へのリクエスト
         $apiResponse = Http::retry(1, 1000)->get($fullUrl); // 1秒のリトライを入れてBooks APIをコール
-//dd($apiResponse);
+
         if (! $apiResponse->ok()) {                         // HTTP ステータス 200 でなければエラーにする
 
             return response()->json([                       // JSON形式でエラー情報を返す
@@ -244,10 +244,12 @@ class BookController extends Controller
 
         // APIレスポンスからbladeに渡せるようにレスポンスを整形
         $data = $apiResponse->json();                       // APIレスポンスをJSON形式に変換（念のため）
-        if (isset($data['items'][0]['volumeInfo]'])) {
-            $response = $data['items'][0]['volumeInfo]'];
+
+        if (isset($data['items'][0]['volumeInfo'])) {       // データがセットされているか？
+
+            $response = $data['items'][0]['volumeInfo'];    // レスポンスにセット
+
         } else {
-            $response = null;
 
             return response()->json([                       // JSON形式でエラー情報を返す
 
@@ -259,7 +261,6 @@ class BookController extends Controller
 
         }
 
-//$dd($response);
         return response()->json($response);                 // 整形したデータを返す
     }
 }

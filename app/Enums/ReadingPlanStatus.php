@@ -12,7 +12,7 @@ enum ReadingPlanStatus: string
     case Inactive  = '未読書';
     case Active    = '読書中';
     case Completed = '読了';
-    case Pause     = '一時停止';
+    case Expired   = '期限超過';
 
     public function badgeClass(): string
     {
@@ -21,7 +21,7 @@ enum ReadingPlanStatus: string
             self::Inactive  => 'bg-gray-600',
             self::Active    => 'bg-green-600',
             self::Completed => 'bg-gray-600',
-            self::Pause     => 'bg-yellow-600',
+            self::Expired   => 'bg-yellow-600',
         };
     }
     public function label(): string
@@ -31,7 +31,7 @@ enum ReadingPlanStatus: string
             self::Inactive  => '未読書',
             self::Active    => '読書中',
             self::Completed => '読了',
-            self::Pause     => '一時停止',
+            self::Expired   => '期限超過',
         };
     }
 }

@@ -91,7 +91,7 @@ class ReadingPlanSeeder extends Seeder
                     break;                                  // 次の処理へ
 
                 case 4:                                     // レコード5
-                    $plan->status = ReadingPlanStatus::Pause; // ステータスを一時中断に書き換える
+                    $plan->status = ReadingPlanStatus::Expired; // ステータスを期限超過に書き換える
 
                     $plan->save();                          // レコードに保存
 
@@ -113,7 +113,7 @@ class ReadingPlanSeeder extends Seeder
             if ($plan->wasRecentlyCreated) {
 
                 $created++;                                 // 作成済みカウントを更新
-    
+
             }
         }
     }
