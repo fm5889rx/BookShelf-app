@@ -18,11 +18,20 @@ class Notification extends Model
      * 複数定義可能な変数
      */
     protected $fillable = [
-        'user_id',
         'timing',
         'title',
         'body',
-        'status',
+        'data',
+        'notifiable_id',
+        'notifiable_type',
+        'read_at',
+    ];
+
+    /**
+     * キャスト設定
+     */
+    protected $casts = [
+        'data' => 'array',
     ];
 
     /**

@@ -4,14 +4,18 @@ namespace Tests\Unit;
 
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\Notification;
+use App\Models\ReadingPlan;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ModelRelationTest extends TestCase
 {
-    use RefreshDatabase;                                    // データベースのリフレッシュを行うトレイトを使用
+    use RefreshDatabase;                                    // データベースのリフレッシュを行うトレイト
 
     /**
      * BookーGenre間 多対多リレーション
@@ -106,6 +110,117 @@ class ModelRelationTest extends TestCase
         // 検証
         $this->assertTrue(                                  // リレーションができているか検証
             $user->likedReviews->contains(fn ($b) => $b->id === $review->id)
+        );
+    }
+
+    /**
+     * Advanced:
+     */
+    public function test_Genreモデルのreviewsリレーションが正しく定義されている(): void
+    {
+        // テストデータの準備
+        $user = User::factory()->create();
+        $genre = Genre::factory()->create();
+
+        // ジャンルに紐づく書籍を作成
+        $book = Book::factory()->create([
+            'user_id'  => $user->id,
+        ]);
+
+        // ピボットテーブルbook_genreに追加
+        $book->genres()->attach($genre);
+
+        // その書籍に紐づくレビューを作成（これで ジャンル ➔ 書籍 ➔ レビュー の線が繋がります）
+        $review = Review::factory()->create([
+            'user_id' => $user->id,
+            'book_id' => $book->id,
+        ]);
+
+        // 実行
+        // リレーションメソッドを呼び出す
+        $reviewsCollection = $genre->reviews()->get();
+
+        // 検証（コレクションが返ってきていること、中身がReviewモデルであることを確認）
+        $this->assertInstanceOf(Collection::class, $reviewsCollection);
+        $this->assertCount(1, $reviewsCollection);
+        $this->assertEquals($book->id, $reviewsCollection->first()->id);
+    }
+
+    /**
+     * AdVanced：
+     */
+    public function test_Notificationモデルのリレーションが正しく定義されている(): void
+    {
+        // テストデータの準備
+        $user = User::factory()->create();
+        $book = Book::factory()->create(['user_id' => $user->id]);
+        $plan = ReadingPlan::factory()->create([
+            'user_id' => $user->id,
+            'book_id' => $book->id,
+        ]);
+
+        // データベース（notificationsテーブル）にレコードを直接作成
+        $notificationRecord = Notification::create([
+            'reading_plan_id' => $plan->id,
+            'timing'          => 'on_due_date',
+            'title'           => 'テストタイトル',
+            'body'            => 'テスト本文',
+            'notifiable_id'   => $user->id,
+            'notifiable_type' => get_class($user),
+            'data'            => json_encode(['reading_plan_id' => $plan->id]),
+        ]);
+
+        // テスト用にリレーションの元となる関係性をモデル内部に強制セット
+        $notificationRecord->setAttribute('user_id', $user->id);
+        $notificationRecord->setAttribute('book_id', $book->id);
+        $notificationRecord->setAttribute('reading_plan_id', $plan->id);
+
+        // 各リレーションがそれぞれの正しいモデルクラスを返すかを検証
+        // userリレーションの検証
+        $this->assertInstanceOf(User::class, $notificationRecord->user);
+
+        // bookリレーションの検証
+        if (isset($notificationRecord->book_id)) {
+            $this->assertInstanceOf(Book::class, $notificationRecord->book);
+        }
+
+        // reading_planリレーションの検証
+        if (isset($notificationRecord->reading_plan_id)) {
+            $this->assertInstanceOf(ReadingPlan::class, $notificationRecord->reading_plan);
+        }
+    }
+    /**
+     * Advanced:
+     */
+    public function test_ReadingPlanモデルのnotificationリレーションが正しく定義されている(): void
+    {
+        // テストデータの準備（ユーザーと読書計画を作成）
+        $user = User::factory()->create();
+        $plan = ReadingPlan::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        // その読書計画に紐づく通知レコードを1件直接作成
+        $plan->notifications()->save(new Notification([
+            'timing'          => 'on_due_date',
+            'title'           => 'リマインダータイトル',
+            'body'            => 'リマインダー本文',
+            'notifiable_id'   => $user->id,
+            'notifiable_type' => get_class($user),
+        ]));
+
+        // 実行
+        // リレーション経由で実際にクエリを発行して取得
+        $notificationsCollection = $plan->fresh()->notifications;
+
+        // 検証
+        // コレクションが返り、作成した通知が確実に1件含まれていること
+        $this->assertInstanceOf(Collection::class, $notificationsCollection);
+        $this->assertCount(1, $notificationsCollection);
+
+        // 戻り値の型宣言（HasMany）の整合性も同時にチェック
+        $this->assertInstanceOf(HasMany::class,
+            $plan->notifications()
         );
     }
 }

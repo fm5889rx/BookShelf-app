@@ -51,7 +51,7 @@ class ReadingPlan extends Model
         return $this->BelongsTo(User::class);
     }
 
-    public function notification(): HasMany             // 通知ー読書計画間リレーション（１対多）
+    public function notifications(): HasMany             // 通知ー読書計画間リレーション（１対多）
     {
         return $this->hasMany(Notification::class);
     }

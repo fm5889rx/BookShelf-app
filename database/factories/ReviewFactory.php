@@ -19,8 +19,8 @@ class ReviewFactory extends Factory
     {
         return [
             'user_id' => User::factory(),                       // ランダムなユーザーIDを生成
-            'rating' => $this->faker->numberBetween(0, 4),      // ランダムな評価値を生成（0〜4）
-            'comment' => $this->faker->text(255),               // ランダムな説明を生成
+            'rating' => $this->faker->numberBetween(1, 5),      // ランダムな評価値を生成（1〜5）
+            'comment' => $this->faker->realText(50),            // ランダムな説明を生成
             'book_id' => Book::factory(),                       // ランダムな書籍IDを生成
         ];
     }
