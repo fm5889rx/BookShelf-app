@@ -279,6 +279,16 @@ cd ~/coachtech/新模擬案件
 ```
 git clone https://github.com/fm5889rx/BookShelf-app.git
 ```
+- Laravelプロジェクトの作成
+```
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    -e COMPOSER_CACHE_DIR=/tmp/composer_cache \
+    laravelsail/php82-composer:latest composer \
+    create-project laravel/laravel:^10.0 bookshelf-app
+```
 
 - Laravel Sailをインストール
 ```
