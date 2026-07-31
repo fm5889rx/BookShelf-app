@@ -329,7 +329,7 @@ DB_DATABASE=laravel
 DB_USERNAME=sail
 DB_PASSWORD=password
 
-GOOGLE_BOOKS_API_KEY=あなたのGoogleBooksAPIキーを設定してください
+GOOGLE_BOOKS_API_KEY="あなたのGoogleBooksAPIキーを設定してください"
 ```
 
 - エイリアス登録
@@ -380,9 +380,9 @@ sail npm run dev
 - **正規の開発・本番環境におけるタスクスケジューラの設定（Cronの登録）**<br>
    本番環境および正規の開発サーバー環境において、Laravelのタスクスケジューラをバックグラウンドで1分ごとに自動起動させるため、サーバーのCron（クーロン）に以下の設定を追加する。
 
-   ```
-   sail artisan schedule:run >> /dev/null 2>&1
-   ```
+```
+sail artisan schedule:run >> storage/logs/schedule.log 2>&1
+```
 
 <br>
 
@@ -456,7 +456,7 @@ sail npm run dev
 - **手動動作確認用コマンド（スケジューラの常駐化）**:
   ```
   # 毎日20時の自動バッチ発火をローカル環境でエミュレート・常駐監視するためのコマンド
-  sail artisan schedule:work
+  sail artisan schedule:work &
   ```
 
 <br>
