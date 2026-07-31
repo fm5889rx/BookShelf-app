@@ -458,8 +458,14 @@ sail artisan schedule:run >> storage/logs/schedule.log 2>&1
 
 - **手動動作確認用コマンド（スケジューラの常駐化）**:
   ```
-  # 毎日20時の自動バッチ発火をローカル環境でエミュレート・常駐監視するためのコマンド
-  sail artisan schedule:work &
+  # 1. 毎日20時の自動バッチ発火をエミュレートするため、まずコンテナ内部（シェル）にログインする
+  sail shell
+
+  # 2. コンテナ内部で出力をログファイルに完全隔離し、バックグラウンドで安全に常駐起動させる
+  php artisan schedule:work >> storage/logs/schedule-work.log 2>&1 &
+
+  # 3. 1分以上経過後、以下のコマンドでコンテナ内に正常な監視ログが刻まれていることを確認する
+  cat storage/logs/schedule-work.log
   ```
 
 <br>
