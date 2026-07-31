@@ -1,4 +1,4 @@
-# 模擬案件_書籍レビューアプリBookShelf
+# 新模擬案件_書籍レビューアプリBookShelf
 
 ## A.プロジェクト名
 BookShelf 書籍レビューアプリ
@@ -277,7 +277,7 @@ cd ~/coachtech/新模擬案件
 　 実行するとホームディレクトリ直下に`bookshelf-app`フォルダが作られる。<br>
 　 作成された`bookshelf-app`がプロジェクトディレクトリになる。
 ```
-git clone git@githob.com:fm5889rx/bookshelf-app.git bookshelf-app
+git clone https://github.com/fm5889rx/BookShelf-app.git
 ```
 
 - Laravel Sailをインストール
