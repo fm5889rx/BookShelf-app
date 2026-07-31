@@ -18,25 +18,29 @@ class ReadingPlanSeeder extends Seeder
 {
     public function run(): void
     {
-        $desired = 9;                                       // 生成したいレコード数
+        $desired = 11;                                      // 生成したいレコード数
 
         $created = 0;                                       // 成功した回数
 
         while ($created < $desired) {                       // 指定件数に到達するまで繰り返す
 
-            if ($created < 5){                              // 生成レコード数が5件以下のとき
+            if ($created < 4) {                             // 生成レコード数が5件以下のとき
 
                 $user = User::find(1);                      // ユーザー１の情報を取得
 
-            } else {                                        // ６件目以降
+            } elseif ($created < 8) {                       // 5〜８件目の時
 
                 $user = User::find(2);                      // ユーザー2の情報を取得
+
+            } else {                                        // 9件目以降
+
+                $user = User::find(3);                      // ユーザー３の情報を取得
 
             }
 
             $book = Book::inRandomOrder()->first();         // ランダムな書籍情報を取得
 
-            try {                                           // exeption監視
+            try {                                           // 例外監視
 
                 $plan = ReadingPlan::firstOrCreate(         // firstOrCreate で重複を自動で回避
                     [
@@ -44,53 +48,45 @@ class ReadingPlanSeeder extends Seeder
 
                         'book_id' => $book->id,             // 書籍IDをセット
 
-                        'start_date' => Carbon::today()->subDays(rand(0, 5)), // Seeder実行日から
-                                                                        // ランダムに過去の日付をセット
-                        'target_date'=> Carbon::today()->addDays(rand(5, 10)), // Seeder実行日から
-                                                                        // ランダムに未来の日付をセット
+                        'start_date' => Carbon::today()->subDays(rand(0, 3)), // Seeder実行日から
+                        // ランダムに過去の日付をセット
+                        'target_date' => Carbon::today()->addDays(rand(2, 5)), // Seeder実行日から
+                        // ランダムに未来の日付をセット
                         'status' => ReadingPlanStatus::Inactive, // ステータス初期値は未読書とする
                     ],
                 );
-            } catch (PDOException $e) {                     // SQL-exeption発生
+            } catch (PDOException $e) {                     // SQL-Exception発生
 
                 if ($e->getCode() == 23000) {               // user_idとbook＿idの組み合わせがユニークで
-                                                            // 時にSQLSTATE(23000)が発生
+                    // ない時にSQLSTATE(23000)が発生
                     continue;                               // 以下の処理をスキップして次回ループを実行
                 }
             }
 
-
             switch ($created) {                             // 生成件数によってステータスの綾井を変える
 
                 case 0:                                     // レコード1
-                    $plan->status = ReadingPlanStatus::NoPlan; // ステータスを未計画に書き換える
-
-                    $plan->save();                          // レコードに保存
-
-                    break;                                  // 次の処理へ
-
-                case 1:                                     // レコード2
                     $plan->status = ReadingPlanStatus::Inactive; // ステータスを未読書に書き換える
 
                     $plan->save();                          // レコードに保存
 
                     break;                                  // 次の処理へ
 
-                case 2:                                     // レコード3
+                case 1:                                     // レコード2
                     $plan->status = ReadingPlanStatus::Active; // ステータスを読書中に書き換える
 
                     $plan->save();                          // レコードに保存
 
                     break;                                  // 次の処理へ
 
-                case 3:                                     // レコード4
+                case 2:                                     // レコード3
                     $plan->status = ReadingPlanStatus::Completed; // ステータスを読了に書き換える
 
                     $plan->save();                          // レコードに保存
 
                     break;                                  // 次の処理へ
 
-                case 4:                                     // レコード5
+                case 3:                                     // レコード4
                     $plan->status = ReadingPlanStatus::Expired; // ステータスを期限超過に書き換える
 
                     $plan->save();                          // レコードに保存

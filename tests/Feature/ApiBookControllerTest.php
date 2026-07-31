@@ -146,7 +146,7 @@ class ApiBookControllerTest extends TestCase
     }
 
     /** @test */
-    public function test_api_一覧取得_ジャンルIDで絞り込めること(): void
+    public function test_api_一覧取得_ジャンル_i_dで絞り込めること(): void
     {
         $genre = Genre::factory()->create();
         $bookWithGenre = Book::factory()->create();
@@ -157,8 +157,8 @@ class ApiBookControllerTest extends TestCase
         $response = $this->getJson("/api/v1/books?genre={$genre->id}");
 
         $response->assertStatus(200)
-                ->assertJsonCount(1, 'data')
-                ->assertJsonPath('data.0.id', $bookWithGenre->id);
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('data.0.id', $bookWithGenre->id);
     }
 
     /** @test */
@@ -329,7 +329,7 @@ class ApiBookControllerTest extends TestCase
         Sanctum::actingAs($user);                               // 自分としてログイン
 
         $book = Book::factory()->create([                       // 他人の本を作成
-            'user_id' => $otherUser->id
+            'user_id' => $otherUser->id,
         ]);
 
         // 実行
@@ -383,7 +383,7 @@ class ApiBookControllerTest extends TestCase
         Sanctum::actingAs($user);                               // 自分としてログイン
 
         $book = Book::factory()->create([                       // 他人の本を作成
-            'user_id' => $otherUser->id
+            'user_id' => $otherUser->id,
         ]);
 
         // 実行
@@ -419,8 +419,8 @@ class ApiBookControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'access_token',
-                'token_type'
-        ]);
+                'token_type',
+            ]);
 
         // トークンタイプが「Bearer」であることも確認
         $response->assertJsonPath('token_type', 'Bearer');
@@ -443,8 +443,8 @@ class ApiBookControllerTest extends TestCase
 
         // 3. 【検証】401 Unauthorizedが返り、指定のメッセージが含まれているか
         $response->assertStatus(401)
-                ->assertJson([
-                    'message' => '認証失敗',
-                ]);
+            ->assertJson([
+                'message' => '認証失敗',
+            ]);
     }
 }

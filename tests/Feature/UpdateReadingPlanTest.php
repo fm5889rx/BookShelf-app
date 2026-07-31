@@ -6,9 +6,10 @@ use App\Enums\ReadingPlanStatus;
 use App\Models\ReadingPlan;
 use App\Models\User;
 use App\Notifications\PlanReminderNotification;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class UpdateReadingPlanTest extends TestCase
@@ -32,36 +33,34 @@ class UpdateReadingPlanTest extends TestCase
 
         // (仕様1) 期日経過 (昨日 7/28 が期日) の Active → Expired化されるべき
         $expiredPlan = ReadingPlan::factory()->create([
-            'user_id'     => $user->id,
-            'status'      => ReadingPlanStatus::Active->value,
+            'user_id' => $user->id,
+            'status' => ReadingPlanStatus::Active->value,
             'target_date' => Carbon::parse('2026-07-28'),
         ]);
 
         // (仕様2) 期日3日前 (8/1 が期日) の Active → 'three_days_before' 通知
         $threeDaysBeforePlan = ReadingPlan::factory()->create([
-            'user_id'     => $user->id,
-            'status'      => ReadingPlanStatus::Active->value,
+            'user_id' => $user->id,
+            'status' => ReadingPlanStatus::Active->value,
             'target_date' => Carbon::parse('2026-08-01'),
         ]);
 
         // (仕様3) 期日当日 (7/29 が期日) の Active → 'on_due_date' 通知
         $todayPlan = ReadingPlan::factory()->create([
-            'user_id'     => $user->id,
-            'status'      => ReadingPlanStatus::Active->value,
+            'user_id' => $user->id,
+            'status' => ReadingPlanStatus::Active->value,
             'target_date' => Carbon::parse('2026-07-29'),
         ]);
 
         // (仕様4) 期日3日前 (7/26 が期日) にすでに Expired になっている計画 → 'three_days_after' 通知
         $threeDaysAfterPlan = ReadingPlan::factory()->create([
-            'user_id'     => $user->id,
-            'status'      => ReadingPlanStatus::Expired->value,
+            'user_id' => $user->id,
+            'status' => ReadingPlanStatus::Expired->value,
             'target_date' => Carbon::parse('2026-07-26'),
         ]);
 
-
         // 4. バッチコマンドを実行
         $this->artisan('app:update-reading-plan')->assertExitCode(0);
-
 
         // 5. 検証：仕様1（一括Expired化）が成功しているか
         $this->assertEquals(ReadingPlanStatus::Expired, $expiredPlan->fresh()->status);
@@ -70,9 +69,11 @@ class UpdateReadingPlanTest extends TestCase
         Notification::assertSentTo(
             $user,
             PlanReminderNotification::class,
-            function ($notification, $channels) use ($threeDaysBeforePlan, $todayPlan, $threeDaysAfterPlan) {
+            function ($notification, $channels) {
                 // database チャンネルが使われているか確認
-                if (!in_array('database', $channels)) return false;
+                if (! in_array('database', $channels)) {
+                    return false;
+                }
 
                 // 届いた通知の type（コンストラクタで渡した文字列）を検証
                 // ※一度に複数走るため、どのタイプが来ても受け入れる検証にしています
@@ -116,10 +117,10 @@ class UpdateReadingPlanTest extends TestCase
     /**
      * スケジュール登録の検証
      */
-    public function test_スケジュール機能にUpdateReadingPlanコマンドが毎日20時実行で登録されている()
+    public function test_スケジュール機能に_update_reading_planコマンドが毎日20時実行で登録されている()
     {
         // 1. スケジュール管理クラス（Schedule）をアプリケーションから取得
-        $schedule = app(\Illuminate\Console\Scheduling\Schedule::class);
+        $schedule = app(Schedule::class);
 
         // 2. 登録されている全イベントの中から、今回のコマンド（app:update-reading-plan）を探す
         $events = collect($schedule->events())->filter(function ($event) {

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * Genreモデルの定義
+ */
 class Genre extends Model
 {
     use HasFactory;
@@ -28,7 +31,7 @@ class Genre extends Model
     // Advanced;
     public function reviews(): BelongsToMany        // ジャンルー書籍情報ーレビュー間リレーション
     {
-    return $this->belongsToMany(Book::class, 'book_genre', 'genre_id', 'book_id')
-        ->whereHas('reviews');
+        return $this->belongsToMany(Book::class, 'book_genre', 'genre_id', 'book_id')
+            ->whereHas('reviews');
     }
 }

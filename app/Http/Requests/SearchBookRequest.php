@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use GuzzleHttp\Promise\FulfilledPromise;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SearchBookRequest extends FormRequest
@@ -21,9 +20,9 @@ class SearchBookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'keyword'  => 'nullable|string|max:255',
+            'keyword' => 'nullable|string|max:255',
             'per_page' => 'nullable|integer|min:1|max:100',
-            'page'     => 'nullable|integer|min:1',
+            'page' => 'nullable|integer|min:1',
         ];
     }
 
@@ -33,11 +32,11 @@ class SearchBookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'keyword.string'  => 'タイトル又は著者は文字列で入力してください',
-            'keyword.max'     => 'タイトル又は著者は255文字以下で入力してください',
-            'per_page.min'    => '1ページあたりの冊数は1以上を入力してください',
-            'per_page.min'    => '1ページあたりの冊数は100以下を入力してください',
-            'page.min'        => 'ページ数は1以上を入力してください',
+            'keyword.string' => 'タイトル又は著者は文字列で入力してください',
+            'keyword.max' => 'タイトル又は著者は255文字以下で入力してください',
+            'per_page.min' => '1ページあたりの冊数は1以上を入力してください',
+            'per_page.min' => '1ページあたりの冊数は100以下を入力してください',
+            'page.min' => 'ページ数は1以上を入力してください',
         ];
     }
 }

@@ -9,7 +9,6 @@ use App\Models\Review;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\View\View;
 
 class ReviewController extends Controller
@@ -63,10 +62,10 @@ class ReviewController extends Controller
     /**
      * レビュー編集画面の表示
      */
-    public function edit(string $id) : View
+    public function edit(string $id): View
     {
         $review = Review::with('book')->findOrFail($id);    // 指定IDのレビューと紐付いた書籍情報を取得、
-                                                                // 存在しない場合は404エラーを返す
+        // 存在しない場合は404エラーを返す
         $this->authorize('edit', $review);          // ログインユーザーがレビューの作成者かpolicyでチェック
 
         return view('reviews.edit', compact('review'));         // レビュー編集ページにレビュー情報を渡す
@@ -78,7 +77,7 @@ class ReviewController extends Controller
     public function update(UpdateReviewRequest $request, string $id): View
     {
         $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
-                                                                // 存在しない場合は404エラーを返す
+        // 存在しない場合は404エラーを返す
         $this->authorize('update', $review);        // ログインユーザーがレビューの作成者かpolicyでチェック
 
         $validated = $request->validated();                     // バリデーション済みのデータを取得
@@ -90,7 +89,7 @@ class ReviewController extends Controller
         $review->update($validated);                          // バリデーション済みのデータでレビューを更新
 
         $book = Book::findOrFail($bookId);                      // 戻り先の書籍情報を取得、
-                                                            // 存在しない場合は404エラーを返す（念の為）
+        // 存在しない場合は404エラーを返す（念の為）
 
         return view('books.show', compact('book'));             // 書籍詳細ページに書籍情報を渡す
     }
@@ -101,7 +100,7 @@ class ReviewController extends Controller
     public function destroy(string $id): RedirectResponse
     {
         $review = Review::findOrFail($id);                      // 指定されたIDのレビューを取得、
-                                                                // 存在しない場合は404エラーを返す
+        // 存在しない場合は404エラーを返す
         $this->authorize('delete', $review);        // ログインユーザーがレビューの作成者かpolicyでチェック
 
         $review->delete();                                      // レビューを削除

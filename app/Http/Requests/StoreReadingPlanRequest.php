@@ -37,11 +37,11 @@ class StoreReadingPlanRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'book_id.required'        => '書籍指定は必須です',
-            'book_id.integer'         => '書籍指定IDは数値で指定してください',
-            'book_id.exists'          => '指定された書籍は存在しません',
-            'target_date.required'    => '期日は必須です',
-            'target_date.date'        => '期日は正しい日付形式で入力してください',
+            'book_id.required' => '書籍指定は必須です',
+            'book_id.integer' => '書籍指定IDは数値で指定してください',
+            'book_id.exists' => '指定された書籍は存在しません',
+            'target_date.required' => '期日は必須です',
+            'target_date.date' => '期日は正しい日付形式で入力してください',
             'target_date.date_format' => '期日の書式はYYYY/MM/DDで入力してください',
         ];
     }

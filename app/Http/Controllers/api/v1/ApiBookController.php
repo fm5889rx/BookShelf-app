@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\api\v1;
+
 /**
  * 公開API
  *
@@ -14,17 +15,15 @@ use App\Http\Requests\ApiUpdateBookRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\JsonResponse;                               // Advanced:
 use illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 
 class ApiBookController extends Controller
 {
     /**
      * 書籍一覧を取得する
-     * 
+     *
      * Advanced:
      * 検索パラメータ対応
      */
@@ -38,15 +37,15 @@ class ApiBookController extends Controller
 
         $query = Book::query();                                 // bookモデルのクエリビルダを取得
 
-        if (!empty($keyword)) {                                 // キーワード指定あり？
+        if (! empty($keyword)) {                                 // キーワード指定あり？
 
-            $query->where('title', 'like', '%' . $keyword . '%')   // クエリビルダに書籍タイトルの部分一致検索条件を追加
-                ->orWhere('author', 'like', '%' . $keyword . '%');  // クエリビルダに著者の部分一致検索条件を追加
+            $query->where('title', 'like', '%'.$keyword.'%')   // クエリビルダに書籍タイトルの部分一致検索条件を追加
+                ->orWhere('author', 'like', '%'.$keyword.'%');  // クエリビルダに著者の部分一致検索条件を追加
         }
 
-        if (!empty($genreId)) {                                 // ジャンル指定あり？
+        if (! empty($genreId)) {                                 // ジャンル指定あり？
 
-            $query->whereHas('genres', fn($q) =>                // ピボットテーブルから指定ジャンルに
+            $query->whereHas('genres', fn ($q) =>                // ピボットテーブルから指定ジャンルに
                 $q->where('genres.id', $genreId));              // 一致する書籍をクエリビルダに追加
 
         }
@@ -160,7 +159,7 @@ class ApiBookController extends Controller
     {
         $validated = $request->validated();                     // バリデーション済みのデータを取得
 
-        if (!Auth::guard('web')->attempt($validated)) {         // チェック済み認証情報でログインできるか
+        if (! Auth::guard('web')->attempt($validated)) {         // チェック済み認証情報でログインできるか
 
             return response()->json([                           // できない場合は401エラーを返す
                 'message' => '認証失敗',
@@ -173,9 +172,9 @@ class ApiBookController extends Controller
         $token = $user->createToken('API Token')                // トークンを作成し、クライアントに返す
             ->plainTextToken;
 
-        return response()->json([                               //認証情報から生成したトークンを返す
+        return response()->json([                               // 認証情報から生成したトークンを返す
             'access_token' => $token,
-            'token_type'   => 'Bearer',
+            'token_type' => 'Bearer',
         ]);
     }
 }

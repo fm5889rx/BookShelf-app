@@ -24,7 +24,7 @@ class ApiUpdateBookRequest extends FormRequest
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'isbn' => [
-                'required', 'string','digits:13',             // isbnの一意性及び自分自身のレコードを除外
+                'required', 'string', 'digits:13',             // isbnの一意性及び自分自身のレコードを除外
                 Rule::unique('books', 'isbn')->ignore($this->route('book')),
             ],
             'published_date' => 'required|date|date_format:Y-m-d',

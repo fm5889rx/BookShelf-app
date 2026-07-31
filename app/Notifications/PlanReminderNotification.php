@@ -2,9 +2,9 @@
 
 namespace App\Notifications;
 
+use App\Models\ReadingPlan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use App\Models\ReadingPlan;
 use Illuminate\Support\Carbon;
 
 class PlanReminderNotification extends Notification
@@ -12,6 +12,7 @@ class PlanReminderNotification extends Notification
     use Queueable;
 
     public ReadingPlan $plan;
+
     public string $type;
 
     public function __construct(ReadingPlan $plan, string $type)
@@ -29,12 +30,12 @@ class PlanReminderNotification extends Notification
     {
         // $notification->data['timing'] で Blade から読めるように構造を最適化
         return [
-            'title'  => $this->getNotificationTitle(),
-            'body'   => $this->getNotificationMessage(),
+            'title' => $this->getNotificationTitle(),
+            'body' => $this->getNotificationMessage(),
             'timing' => $this->type, // notificationsテーブルのtimingカラム用
-            'data'   => [
+            'data' => [
                 'reading_plan_id' => $this->plan->id,
-                'timing'          => $this->type,
+                'timing' => $this->type,
             ],
         ];
     }
@@ -43,9 +44,9 @@ class PlanReminderNotification extends Notification
     {
         return match ($this->type) {
             'three_days_before' => '【まもなく期日】読書計画の進捗はいかがですか？',
-            'on_due_date'       => '【本日締切】読書計画の最終日です！',
-            'three_days_after'  => '【再チャレンジ】もう一度読書を始めてみませんか？',
-            default             => '読書計画のリマインダー',
+            'on_due_date' => '【本日締切】読書計画の最終日です！',
+            'three_days_after' => '【再チャレンジ】もう一度読書を始めてみませんか？',
+            default => '読書計画のリマインダー',
         };
     }
 
@@ -55,9 +56,9 @@ class PlanReminderNotification extends Notification
 
         return match ($this->type) {
             'three_days_before' => "計画の期日（{$dueDateStr}）まであと3日です。無理のないペースで読み進めましょう！",
-            'on_due_date'       => "本日が計画の期日（{$dueDateStr}）です。読了したらステータスを「読了」に更新してくださいね。",
-            'three_days_after'  => "計画の期限が過ぎてから3日が経過しました。新しい目標を設定して、読書を再開してみましょう！",
-            default             => '読書計画の進捗を確認してください。',
+            'on_due_date' => "本日が計画の期日（{$dueDateStr}）です。読了したらステータスを「読了」に更新してくださいね。",
+            'three_days_after' => '計画の期限が過ぎてから3日が経過しました。新しい目標を設定して、読書を再開してみましょう！',
+            default => '読書計画の進捗を確認してください。',
         };
     }
 }

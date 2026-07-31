@@ -2,15 +2,16 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Carbon\Carbon;
+use App\Enums\ReadingPlanStatus;
 use App\Models\ReadingPlan;
 use App\Notifications\PlanReminderNotification;
-use App\Enums\ReadingPlanStatus;
+use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class UpdateReadingPlan extends Command
 {
     protected $signature = 'app:update-reading-plan';
+
     protected $description = '期日経過計画のステータス変更および各種リマインダー通知の送信';
 
     public function handle()
@@ -38,6 +39,7 @@ class UpdateReadingPlan extends Command
         $this->sendNotification($threeDaysAfter, ReadingPlanStatus::Expired, 'three_days_after');
 
         $this->info('リマインダー通知の処理が完了しました。');
+
         return Command::SUCCESS;
     }
 

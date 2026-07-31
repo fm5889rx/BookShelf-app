@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;                  // Advanced:
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Symfony\Component\HttpFoundation\Response;                      // Advanced:
+// Advanced:
 use Throwable;
 
 class Handler extends ExceptionHandler

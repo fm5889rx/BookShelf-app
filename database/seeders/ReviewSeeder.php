@@ -31,33 +31,35 @@ class ReviewSeeder extends Seeder
                 // 各回で具体的なレビューを入れていく
                 switch ($review->rating) {                      // 評価点ごとに汎用コメントを割り当てる
 
-                    case 1:                                     // 評価点１
+                    case 1:                                     // 評価点5
                         $review->comment = '期待していただけに、少し残念な内容でした。';
 
                         $review->save();                        // コメントを保存
 
                         break;                                  // 次の処理に移行する
 
-                    case 2:                                     // 評価点２
+                    case 2:                                     // 評価点2
                         $review->comment = 'ターゲットや好みが分かれる印象でした。';
 
                         $review->save();                        // コメントを保存
 
                         break;                                  // 次の処理に移行する
 
-                    case 3:                                     // 評価点３
+                    case 3:                                     // 評価点3
                         $review->comment = '基本が網羅されており、気軽に読めます。';
 
                         $review->save();                        // コメントを保存
+
                         break;                                  // 次の処理に移行する
-                    case 4:                                     // 評価点４
+
+                    case 4:                                     // 評価点4
                         $review->comment = '非常に参考になり、読んで損はない内容です。';
 
                         $review->save();                        // コメントを保存
 
                         break;                                  // 次の処理に移行する
 
-                    case 5:                                     // 評価点５
+                    case 5:                                     // 評価点5
                         $review->comment = '期待以上の満足感で、一気に読み終えました。';
 
                         $review->save();                        // コメントを保存

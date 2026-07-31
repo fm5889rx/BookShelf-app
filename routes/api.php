@@ -5,7 +5,6 @@
  * Sanctum対応
  */
 use App\Http\Controllers\api\v1\ApiBookController;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes

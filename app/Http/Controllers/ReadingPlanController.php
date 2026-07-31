@@ -13,8 +13,8 @@ use App\Models\Book;
 use App\Models\ReadingPlan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ReadingPlanController extends Controller
@@ -28,7 +28,7 @@ class ReadingPlanController extends Controller
     {
         $user = Auth::user();                                   // ログインユーザー情報を取得
 
-        if (!$user) {                                           // 未ログインならば
+        if (! $user) {                                           // 未ログインならば
 
             return redirect()->route('login');                  // ログイン画面にリダイレクト
         }
@@ -162,7 +162,7 @@ class ReadingPlanController extends Controller
     {
         $readingPlan = ReadingPlan::findOrFail($id);            // 対象レコードをテーブルから読み込み
 
-        $readingPlan->status = readingPlanStatus::Completed;    // ステータスを読了に更新
+        $readingPlan->status = ReadingPlanStatus::Completed;    // ステータスを読了に更新
 
         $readingPlan->completed_at = now();                     // 完了日を現在日時に更新
 

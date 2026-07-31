@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-
 /**
  * 読書計画のバリデーションチェック単体テスト
  */
@@ -153,19 +152,19 @@ class ReadingPlanValidationTest extends TestCase
     /**
      * ENUMのバリデーションチェック
      **/
-    public function test_有効なEnumの値はバリデーションを通過する()
+    public function test_有効な_enumの値はバリデーションを通過する()
     {
         Sanctum::actingAs(User::factory()->create());
 
         $response = $this->post(route('reading-plans.store'), [
             'title' => 'テスト書籍',
-            'status' =>ReadingPlanStatus::Active->value, // 有効な値を指定
+            'status' => ReadingPlanStatus::Active->value, // 有効な値を指定
         ]);
 
         $response->assertStatus(302);
     }
 
-    public function test_無効なEnumの値はバリデーションで弾かれる()
+    public function test_無効な_enumの値はバリデーションで弾かれる()
     {
         Sanctum::actingAs(User::factory()->create());
 

@@ -16,7 +16,7 @@ use Illuminate\View\View;
 
 /**
  * 書籍関連のコントローラ
- * 
+ *
  * Advanced:
  * ・書籍一覧画面に検索機能追加
  * ・ISBN検索機能を追加
@@ -72,13 +72,13 @@ class BookController extends Controller
 
         $query = Book::query();                                 // bookモデルのクエリビルダを取得
 
-        if (!empty($keyword)) {                                 // キーワード指定あり？
+        if (! empty($keyword)) {                                 // キーワード指定あり？
 
-            $query->where('title', 'like' , '%'.$keyword.'%')   // クエリビルダに書籍タイトルの部分一致検索条件を追加
+            $query->where('title', 'like', '%'.$keyword.'%')   // クエリビルダに書籍タイトルの部分一致検索条件を追加
                 ->orWhere('author', 'like', '%'.$keyword.'%');  // クエリビルダに著者の部分一致検索条件を追加
         }
 
-        if (!empty($genreId)) {                                 // ジャンル指定あり？
+        if (! empty($genreId)) {                                 // ジャンル指定あり？
 
             $query->whereHas('genres', fn ($q) =>               // ピボットテーブルから指定ジャンルに
                 $q->where('genres.id', $genreId));               // 一致する書籍をクエリビルダに追加
@@ -224,9 +224,9 @@ class BookController extends Controller
     {
         $apiKey = config('services.google.books_api_key');  // Google Books API のキーを.envから取得
 
-        $url = 'https://www.googleapis.com/books/v1/volumes'; // APIのURLをセット
+        $url = 'https://www.googleapis.com/books/v1/volumes'; // APIのエンドポイントURLをセット
 
-        $fullUrl = $url . '?q=isbn:' . $isbn . '&key=' . $apiKey;
+        $fullUrl = $url.'?q=isbn:'.$isbn.'&key='.$apiKey;
 
         // Google Books API へのリクエスト
         $apiResponse = Http::retry(1, 1000)->get($fullUrl); // 1秒のリトライを入れてBooks APIをコール
@@ -235,9 +235,9 @@ class BookController extends Controller
 
             return response()->json([                       // JSON形式でエラー情報を返す
 
-                'error' => 'Google Books API への問い合わせに失敗しました', //エラーメッセージ
+                'error' => 'Google Books API への問い合わせに失敗しました', // エラーメッセージ
 
-                'code'  => $apiResponse->status(),          // Google APIからのエラーコード
+                'code' => $apiResponse->status(),          // Google APIからのエラーコード
 
             ], $apiResponse->status());                     // Google APIからのエラーコードを返す
         }
@@ -247,15 +247,28 @@ class BookController extends Controller
 
         if (isset($data['items'][0]['volumeInfo'])) {       // データがセットされているか？
 
-            $response = $data['items'][0]['volumeInfo'];    // レスポンスにセット
+            $volumeInfo = $data['items'][0]['volumeInfo']; // 書籍データ部分を取り出し
+
+            // 配列形のauthors[]があるか？
+            if (isset($volumeInfo['authors']) && is_array($volumeInfo['authors'])) {
+
+                $volumeInfo['author'] = implode(', ', $volumeInfo['authors']); // 配列要素をカンマで結合
+
+            } else {
+
+                $volumeInfo['author'] = '';                // 著者情報がない場合は空文字をセット
+
+            }
+
+            $response = $volumeInfo;                        // 整形しだデータをレスポンスにセット
 
         } else {
 
             return response()->json([                       // JSON形式でエラー情報を返す
 
-                'error' => '書籍検索に失敗しました',            //エラーメッセージ
+                'error' => '書籍検索に失敗しました',            // エラーメッセージ
 
-                'code'  => $apiResponse->status(),          // Google APIからのエラーコードをセット
+                'code' => $apiResponse->status(),          // Google APIからのエラーコードをセット
 
             ], 404);                                        // 404 Not Found エラーコードを返す
 

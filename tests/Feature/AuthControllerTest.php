@@ -3,12 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Doctrine\DBAL\Query\QueryException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Mockery;
-use PDOException;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 /**
@@ -419,7 +417,7 @@ class AuthControllerTest extends TestCase
     /**
      * Fortify の画面にアクセスするテスト
      */
-    public function test_FortifyServiceProviderの設定が正しくロードされる(): void
+    public function test_fortify_service_providerの設定が正しくロードされる(): void
     {
         // ログイン画面にアクセスして、loginView の設定を通過させる
         $responseLogin = $this->get('/login');
@@ -440,11 +438,34 @@ class AuthControllerTest extends TestCase
     {
         // ダミーのデータでログインPOSTリクエストを送信
         $response = $this->post('/login', [
-            'email'    => 'dummy-test-user@example.com',
+            'email' => 'dummy-test-user@example.com',
             'password' => 'wrong-password', // ログインの成否は関係ないので間違ったパスワードでOK
         ]);
 
         // リクエストが送信され、レートリミッターが動いたことを検証
         $this->assertNotNull($response);
+    }
+
+    public function test_認可エラーが発生したときに前のページへエラーメッセージ付きでリダイレクトされる()
+    {
+        // 1. テスト環境で「例外ハンドラ」を通常通り動かすように強制する
+        $this->withExceptionHandling();
+
+        // 2. わざと403（AuthorizationException）を発生させるテスト用のルートを作る
+        Route::get('/_test-403', function () {
+            throw new AuthorizationException('権限がありません');
+        });
+
+        // 3. 「前のページ（一覧画面など）」からアクセスしてきたという状況（リファラ）を再現する
+        $previousUrl = url('/books');
+
+        // 4. 前のページ情報をヘッダーに持たせて、わざと例外が出るルートへアクセス
+        $response = $this->from($previousUrl)->get('/_test-403');
+
+        // 5. 【検証】前のページへ正しくリリダイレクト（302）されているか
+        $response->assertRedirect($previousUrl);
+
+        // 6. 【検証】セッション（フラッシュメッセージ）に指定の文字が入っているか
+        $response->assertSessionHas('error', '編集権限がありません');
     }
 }

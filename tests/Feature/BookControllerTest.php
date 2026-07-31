@@ -124,7 +124,6 @@ class BookControllerTest extends TestCase
         $this->assertEquals(10, $books->perPage());             // 10件/ページでページネーションしているか
     }
 
-
     public function test_書籍一覧を表示できる_パターン5(): void
     {
         // 準備
@@ -357,15 +356,15 @@ class BookControllerTest extends TestCase
         ]);
 
         // 実行
-        $response = $this->put(route('books.update', $book->id), [ //ログインしないで書籍情報を更新
-                'title' => 'テストタイトル',
-                'author' => 'テストユーザー',
-                'isbn' => '1234567890123',
-                'published_date' => '2026-07-01',
-                'description' => 'テスト説明',
-                'image_url' => 'http://example.com/image.jpg',
-                'genres' => [$genre->id],
-            ]);
+        $response = $this->put(route('books.update', $book->id), [ // ログインしないで書籍情報を更新
+            'title' => 'テストタイトル',
+            'author' => 'テストユーザー',
+            'isbn' => '1234567890123',
+            'published_date' => '2026-07-01',
+            'description' => 'テスト説明',
+            'image_url' => 'http://example.com/image.jpg',
+            'genres' => [$genre->id],
+        ]);
 
         // 検証
         $response->assertStatus(302);                           // HTTPステータスが302を期待
@@ -422,18 +421,18 @@ class BookControllerTest extends TestCase
      * Advanced:　ISBN検索
      */
     /** 正常系 ＊*/
-    public function test_ISBN検索_正常系_書籍情報が正しく取得できること(): void
+    public function test_isb_n検索_正常系_書籍情報が正しく取得できること(): void
     {
         // 💡 1. 正常系は「ステータス 200」で、items[0]['volumeInfo'] の構造を返す
         Http::fake(['*' => Http::response([
-                'items' => [
-                    [
-                        'volumeInfo' => [
-                            'title' => 'テスト駆動開発',
-                        ]
-                    ]
-                ]
-            ], 200)
+            'items' => [
+                [
+                    'volumeInfo' => [
+                        'title' => 'テスト駆動開発',
+                    ],
+                ],
+            ],
+        ], 200),
         ]);
 
         $response = $this->get(route('books.searchByIsbn', ['isbn' => '1234567890']));
@@ -446,12 +445,12 @@ class BookControllerTest extends TestCase
     }
 
     /** 異常系 **/
-    public function test_ISBN検索_異常系_API問い合わせに失敗したときエラーになること(): void
+    public function test_isb_n検索_異常系_ap_i問い合わせに失敗したときエラーになること(): void
     {
         // 💡 2. 異常系は「ステータス 500」で、エラー状態を返す
         Http::fake(['*' => Http::response([
-                'error' => 'Internal Server Error'
-            ], 500)
+            'error' => 'Internal Server Error',
+        ], 500),
         ]);
 
         $response = $this->get(route('books.searchByIsbn', ['isbn' => '1234567890']));
@@ -460,17 +459,17 @@ class BookControllerTest extends TestCase
         $response->assertStatus(500);
         $response->assertJson([
             'error' => 'Google Books API への問い合わせに失敗しました',
-            'code'  => 500,
+            'code' => 500,
         ]);
     }
 
     /** Book APIは成功でも書籍データが空の場合 **/
-    public function test_ISBN検索_異常系_書籍データが存在しないとき404エラーになること(): void
+    public function test_isb_n検索_異常系_書籍データが存在しないとき404エラーになること(): void
     {
         // Google APIの通信は成功（200）するが、itemsが空（または存在しない）の状態
         Http::fake(['*' => Http::response([
-                'items' => [] // 404エラーを出すために空配列にしておく
-            ], 200)
+            'items' => [], // 404エラーを出すために空配列にしておく
+        ], 200),
         ]);
 
         $response = $this->get(route('books.searchByIsbn', ['isbn' => '1234567890']));
@@ -479,7 +478,7 @@ class BookControllerTest extends TestCase
         $response->assertStatus(404);
         $response->assertJson([
             'error' => '書籍検索に失敗しました',
-            'code'  => 200,
+            'code' => 200,
         ]);
     }
 }

@@ -48,12 +48,12 @@ class ReportController extends Controller
             ];
         })->toArray();
 
-        // ジャンル滅評価傾向TOP5を準備
+        // ジャンル別評価傾向TOP5を準備
         $topGenres = Genre::query()                             // genresテーブルを操作
 
             ->select('genres.*',                                // 全てのカラムを取得
-                    DB::raw('AVG(reviews.rating) as average_rating'), // 平均評価点
-                    DB::raw('COUNT(reviews.id) as count'))      // レビュー数
+                DB::raw('AVG(reviews.rating) as average_rating'), // 平均評価点
+                DB::raw('COUNT(reviews.id) as count'))      // レビュー数
 
             ->join('book_genre', 'genres.id', '=', 'book_genre.genre_id') // ピボットテーブルと接続
 
@@ -87,12 +87,28 @@ class ReportController extends Controller
 
             ->groupBy('rating')                                 // 評価点でグループ化
 
-            ->orderByDesc('rating')                             // 評価点が高い順
+            ->orderBy('rating')                                 // 評価点が低い順
 
             ->get();                                            // 条件に該当するレコードを取得
 
         $reviewRating = $rating->pluck('total', 'rating')       // コレクションを連想配列化
             ->toArray();
+
+        // reviews.ratingが1〜5なのに対しbladeは0〜4で扱っているので、キーを−１にする
+        $baseStars = collect([                            // 0〜4のキーを0件で初期化したコレクションを作成
+            0 => 0,
+            1 => 0,
+            2 => 0,
+            3 => 0,
+            4 => 0,
+        ]);
+
+        // 取得したデータを「キーを -1」してマッピングし、初期値のコレクションと結合
+        $reviewRating = $baseStars->replace(                    // ビューに渡す配列を取得
+            collect($reviewRating)->mapWithKeys(function ($total, $currentRating) {
+                return [$currentRating - 1 => $total];          // キーを -1 して詰め替え
+            })
+        )->toArray();
 
         // bladeに渡す連想配列を準備
         $data = [

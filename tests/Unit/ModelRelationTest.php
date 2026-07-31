@@ -116,7 +116,7 @@ class ModelRelationTest extends TestCase
     /**
      * Advanced:
      */
-    public function test_Genreモデルのreviewsリレーションが正しく定義されている(): void
+    public function test_genreモデルのreviewsリレーションが正しく定義されている(): void
     {
         // テストデータの準備
         $user = User::factory()->create();
@@ -124,7 +124,7 @@ class ModelRelationTest extends TestCase
 
         // ジャンルに紐づく書籍を作成
         $book = Book::factory()->create([
-            'user_id'  => $user->id,
+            'user_id' => $user->id,
         ]);
 
         // ピボットテーブルbook_genreに追加
@@ -149,7 +149,7 @@ class ModelRelationTest extends TestCase
     /**
      * AdVanced：
      */
-    public function test_Notificationモデルのリレーションが正しく定義されている(): void
+    public function test_notificationモデルのリレーションが正しく定義されている(): void
     {
         // テストデータの準備
         $user = User::factory()->create();
@@ -162,12 +162,12 @@ class ModelRelationTest extends TestCase
         // データベース（notificationsテーブル）にレコードを直接作成
         $notificationRecord = Notification::create([
             'reading_plan_id' => $plan->id,
-            'timing'          => 'on_due_date',
-            'title'           => 'テストタイトル',
-            'body'            => 'テスト本文',
-            'notifiable_id'   => $user->id,
+            'timing' => 'on_due_date',
+            'title' => 'テストタイトル',
+            'body' => 'テスト本文',
+            'notifiable_id' => $user->id,
             'notifiable_type' => get_class($user),
-            'data'            => json_encode(['reading_plan_id' => $plan->id]),
+            'data' => json_encode(['reading_plan_id' => $plan->id]),
         ]);
 
         // テスト用にリレーションの元となる関係性をモデル内部に強制セット
@@ -189,10 +189,11 @@ class ModelRelationTest extends TestCase
             $this->assertInstanceOf(ReadingPlan::class, $notificationRecord->reading_plan);
         }
     }
+
     /**
      * Advanced:
      */
-    public function test_ReadingPlanモデルのnotificationリレーションが正しく定義されている(): void
+    public function test_reading_planモデルのnotificationリレーションが正しく定義されている(): void
     {
         // テストデータの準備（ユーザーと読書計画を作成）
         $user = User::factory()->create();
@@ -202,10 +203,10 @@ class ModelRelationTest extends TestCase
 
         // その読書計画に紐づく通知レコードを1件直接作成
         $plan->notifications()->save(new Notification([
-            'timing'          => 'on_due_date',
-            'title'           => 'リマインダータイトル',
-            'body'            => 'リマインダー本文',
-            'notifiable_id'   => $user->id,
+            'timing' => 'on_due_date',
+            'title' => 'リマインダータイトル',
+            'body' => 'リマインダー本文',
+            'notifiable_id' => $user->id,
             'notifiable_type' => get_class($user),
         ]));
 

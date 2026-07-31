@@ -9,7 +9,6 @@ use App\Models\Book;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
@@ -553,15 +552,15 @@ class BookValidationTest extends TestCase
     /** pageが範囲外 */
     public function test_異常系_ページ指定が範囲外()
     {
-    // 準備
-    $rules = (new SearchBookRequest)->rules();          // バリデーションルールを取得する
+        // 準備
+        $rules = (new SearchBookRequest)->rules();          // バリデーションルールを取得する
 
-    $this->validData['page'] = 0;                       // min:1 を下回る
+        $this->validData['page'] = 0;                       // min:1 を下回る
 
-    // 実行
-    $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
+        // 実行
+        $validator = Validator::make($this->validData->toArray(), $rules);  // バリデーションチェック
 
-    // 判定
-    $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
-}
+        // 判定
+        $this->assertTrue($validator->fails());             // 失敗ならTrueを返す
+    }
 }

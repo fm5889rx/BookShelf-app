@@ -45,7 +45,7 @@ class ReadingPlanControllerTest extends TestCase
         // 読書計画を11件作成（10件を超えるページネーションを検証するため）
         ReadingPlan::factory()->count(11)->create([
             'user_id' => $user->id,
-            'status'  => ReadingPlanStatus::Active->value,
+            'status' => ReadingPlanStatus::Active->value,
         ]);
 
         // 2. 実行：クエリパラメータなしでアクセス
@@ -74,11 +74,11 @@ class ReadingPlanControllerTest extends TestCase
         // Active（読書中）を1件、Expired（期限超過）を1件作成
         $activePlan = ReadingPlan::factory()->create([
             'user_id' => $user->id,
-            'status'  => ReadingPlanStatus::Active->value,
+            'status' => ReadingPlanStatus::Active->value,
         ]);
         $expiredPlan = ReadingPlan::factory()->create([
             'user_id' => $user->id,
-            'status'  => ReadingPlanStatus::Expired->value,
+            'status' => ReadingPlanStatus::Expired->value,
         ]);
 
         // 2. 実行：status=Active で絞り込みクエリを投げる（when() を強制通過させる）
@@ -104,7 +104,7 @@ class ReadingPlanControllerTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        \App\Models\Book::factory()->count(3)->create(['user_id' => $user->id]);
+        Book::factory()->count(3)->create(['user_id' => $user->id]);
 
         // 2. 実行：作成画面（create）にアクセス
         // ※実際のルート名（例: reading-plans.create）に合わせてください
@@ -162,7 +162,7 @@ class ReadingPlanControllerTest extends TestCase
                 'target_date' => Carbon::today()->addDays(3)->toDateString(),
                 'status' => ReadingPlanStatus::Inactive->value,
                 'completed_at' => null,
-        ]);
+            ]);
 
         // 検証
         $response->assertStatus(302);                           // 前のページにリダイレクトされていることを確認
@@ -191,7 +191,7 @@ class ReadingPlanControllerTest extends TestCase
 
         // 同じ book_id でもう一度ポストするデータを準備
         $postData = [
-            'book_id'     => $book->id,
+            'book_id' => $book->id,
             'target_date' => Carbon::today()->addMonth()->format('Y-m-d'),
         ];
 
@@ -221,8 +221,8 @@ class ReadingPlanControllerTest extends TestCase
         // 実行
         $response = $this->actingAs($user)                      // 読書計画を更新
             ->put(route('reading-plans.update', $plan->id), [
-            'target_date' => Carbon::today()->addDays(5)->toDateString(),
-        ]);
+                'target_date' => Carbon::today()->addDays(5)->toDateString(),
+            ]);
 
         // 検証
         $response->assertRedirect(route('reading-plans.index')); // 読書計画一覧画面が表示されることを確認
