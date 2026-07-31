@@ -261,6 +261,7 @@ erDiagram
 - 開発ツール：Docker compose v5.1.4、sail 8.5、phpMyAdmin 5.2.3
 
 <br>
+<br>
 
 ## E.開発環境構築
 
@@ -380,7 +381,7 @@ sail npm run dev
    本番環境および正規の開発サーバー環境において、Laravelのタスクスケジューラをバックグラウンドで1分ごとに自動起動させるため、サーバーのCron（クーロン）に以下の設定を追加する。
 
    ```
-   cd /bookshelf-app && sail artisan schedule:run >> /dev/null 2>&1
+   sail artisan schedule:run >> /dev/null 2>&1
    ```
 
 <br>
