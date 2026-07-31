@@ -397,8 +397,9 @@ sail npm run dev
 本プロジェクトでは、アプリケーションの信頼性と堅牢性を担保するため、すべての主要機能に対して「正常系」「異常系」の自動テスト（Featureテスト・Unitテスト）を実装している。<br>
 ターミナルで各フィルターコマンドを実行することで、それぞれの機能層のテストを個別に検証する。
 
-現在、**合計200ケース以上のテストすべてが Passed（合格）** していることを確認済み。
+現在、**合計200ケースのテストすべてが Passed（合格）** していることを確認済み。
 
+<br>
 
 ### ① モデル・リレーション定義関連（Eloquent Relations）
 
@@ -414,6 +415,7 @@ sail npm run dev
   sail artisan test --filter=ModelRelationTest
   ```
 
+<br>
 
 ### ② フォームリクエスト・バリデーション関連（Validation）
 
@@ -428,6 +430,8 @@ sail npm run dev
   ```
   sail artisan test --filter=Validation
   ```
+
+<br>
 
 ### ③ 読書計画管理・スケジュール関連（ReadingPlan & Batch）
 
@@ -449,6 +453,8 @@ sail npm run dev
   sail artisan schedule:work
   ```
 
+<br>
+
 ### ④ 認証・ユーザー登録関連（Authentication & Fortify）
 
 Laravel Fortify をベースとした、未ログインユーザーのアクセス制限やログイン・会員登録処理の検証を行う。
@@ -461,6 +467,8 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   ```
   sail artisan test --filter=AuthControllerTest
   ```
+
+<br>
 
 ### ⑤ 書籍管理・外部API連携関連（Book & Google Books API）
 
@@ -476,6 +484,8 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   sail artisan test --filter=BookControllerTest
   ```
 
+<br>
+
 ### ⑥ ジャンル管理関連（Genre & Categorization）
 
 書籍に紐づくジャンルの表示や、ジャンルごとの書籍分類ロジックの検証を行う。
@@ -488,6 +498,8 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   ```
   sail artisan test --filter=GenreControllerTest
   ```
+
+<br>
 
 ### ⑦ 通知機能・ログ関連（Notification Base）
 
@@ -502,6 +514,8 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   sail artisan test --filter=NotificationTest
   ```
 
+<br>
+
 ### ⑧ 読書計画コントローラー（ReadingPlan Controller 追加検証）
 
 読書計画の表示、登録における画面遷移や、より詳細なパラメータ制御の検証を行う。
@@ -514,6 +528,8 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   ```
   sail artisan test --filter=ReadingPlanControllerTest
   ```
+
+<br>
 
 ### ⑨ マイ読書レポート（Report & Analytics）
 
@@ -528,6 +544,8 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   sail artisan test --filter=ReportControllerTest
   ```
 
+<br>
+
 ### ⑩ レビュー・評価管理関連（Review Controller）
 
 書籍に対する評価（星の数）や、コメントの投稿・更新・削除の検証を行う。
@@ -540,6 +558,8 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   ```
   sail artisan test --filter=ReviewControllerTest
   ```
+
+<br>
 
 ### ⑪ その他周辺機能（Other Functions）
 
@@ -554,4 +574,4 @@ Laravel Fortify をベースとした、未ログインユーザーのアクセ�
   ```
   sail artisan test --filter=OtherFunctionTest
   ```
-
+<br>
