@@ -389,10 +389,13 @@ sail artisan schedule:run >> storage/logs/schedule.log 2>&1
 ### 2.動作確認
 
 - Laravelの動作確認
-ブラウザで`http://localhost`にアクセスし、お問い合わせ入力フォームが表示されることを確認。
+　 ブラウザで`http://localhost`にアクセスし、お問い合わせ入力フォームが表示されることを確認。
 
 - phpMyAdninの動作確認
-ブラウザで`http://localhost:8080`にアクセスし、phpMyAdminが表示されていることを確認。
+　 ブラウザで`http://localhost:8080`にアクセスし、phpMyAdminが表示されていることを確認。
+
+- スケジュール機能の確認
+　 コンソールでjobsコマンドを実行。
 
 
 <br>
